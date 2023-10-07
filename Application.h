@@ -2,16 +2,21 @@
 
 namespace RendererDemo {
 
+struct ApplicationInfo {
+    std::string name = "RendererDemo Application";
+};
+
 class Application {
 public:
-    Application() {};
+    Application(RendererDemo::ApplicationInfo appInfo);
     ~Application() {};
 
     void run();
 
+    void close();
 
 private:
-    std::string app_name = "RendererDemo Application";
+    RendererDemo::ApplicationInfo m_AppInfo;
 };
 
 }

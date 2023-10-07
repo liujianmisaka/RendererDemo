@@ -1,9 +1,17 @@
 #include "Application.h"
 
 namespace RendererDemo {
-    void Application::run() {
-        while(true){
 
-        }
+Application::Application(ApplicationInfo appInfo) 
+    : m_AppInfo(appInfo)
+{
+    // init window
+    // init Render
+}
+
+void Application::run() {
+    while(true){
+        
     }
+}
 }
