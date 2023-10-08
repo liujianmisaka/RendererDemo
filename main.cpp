@@ -1,8 +1,11 @@
 #include <iostream>
 #include "Application.hpp"
+#include "Log.hpp"
 
 
 int main() {
+    RendererDemo::Log::Init();
+
     RendererDemo::ApplicationInfo appInfo {};
     RendererDemo::Application app {appInfo};
 
