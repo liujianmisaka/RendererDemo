@@ -1,9 +1,10 @@
 #include <iostream>
-#include "Application.h"
+#include "Application.hpp"
 
 
 int main() {
-    RendererDemo::Application app;
+    RendererDemo::ApplicationInfo appInfo {};
+    RendererDemo::Application app {appInfo};
 
     std::cout << "RendererDemo Running!\n";
 

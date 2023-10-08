@@ -9,9 +9,19 @@ enable_testing()
 find_package(glfw3 CONFIG REQUIRED)
 find_package(glm CONFIG REQUIRED)
 
-add_executable(RendererDemo main.cpp Application.h Application.cpp)
+set(
+RendererDemo_SRC 
+    main.cpp 
+    Application.hpp Application.cpp
+    Window.hpp Window.cpp
+)
+
+add_executable(RendererDemo ${RendererDemo_SRC})
 target_link_libraries(RendererDemo PRIVATE glfw)
 target_link_libraries(RendererDemo PRIVATE glm::glm)
+
+target_include_directories(RendererDemo PRIVATE glfw)
+target_include_directories(RendererDemo PRIVATE glm::glm)
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})

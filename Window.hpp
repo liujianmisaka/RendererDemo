@@ -1,0 +1,8 @@
+
+namespace RendererDemo {
+
+class Window {
+
+};
+
+}
