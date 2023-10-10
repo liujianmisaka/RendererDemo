@@ -1,4 +1,3 @@
-#include <iostream>
 #include "Application.hpp"
 #include "Log.hpp"
 
@@ -6,12 +5,10 @@
 int main() {
     RendererDemo::Log::Init();
 
-    RendererDemo::ApplicationInfo appInfo {};
-    RendererDemo::Application app {appInfo};
+    RendererDemo::Application app {};
 
-    std::cout << "RendererDemo Running!\n";
+    LOGGER_CORE_WARN("RendererDemo Running!");
 
     app.run();
-
-    std::cout << "RendererDemo Closed!\n";
+    LOGGER_CORE_WARN("RendererDemo Closed!");
 }

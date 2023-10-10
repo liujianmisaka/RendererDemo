@@ -5,8 +5,7 @@
 
 namespace RendererDemo {
 
-Window::Window(WindowProps prop) {
-
+Window::Window() {
     if(!glfwInit()) {
         LOGGER_CORE_ERROR("Failed to init GLFW!");
         exit(-1);
@@ -16,7 +15,7 @@ Window::Window(WindowProps prop) {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     
-    m_GLFWWindow = glfwCreateWindow(prop.width, prop.height, prop.title.c_str(), nullptr, nullptr);
+    m_GLFWWindow = glfwCreateWindow(1280, 960, "Renderer Demo", nullptr, nullptr);
 
     if(!m_GLFWWindow) {
         LOGGER_CORE_ERROR("Failed to create GLFW window!");
