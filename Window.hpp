@@ -9,14 +9,15 @@ namespace RendererDemo {
 struct WindowProps {
     int width = 1280;
     int height = 960;
-    std::string title = "RendererDemo";
+    std::string title = "RendererDemo Window";
 };
 
 class Window {
 public:
-    Window(WindowProps prop);
+    Window(WindowProps prop = WindowProps{});
     ~Window();
 
+    void run();
 
 private:
     GLFWwindow* m_GLFWWindow;

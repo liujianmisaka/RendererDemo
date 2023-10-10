@@ -7,14 +7,14 @@ namespace RendererDemo {
 Application::Application(ApplicationInfo appInfo) 
     : m_AppInfo(appInfo)
 {
-    LOGGER_CORE_INFO("App Create!");
-    // init window
+    m_MainWindow = RendererDemo::Window{};
     // init Render
+    LOGGER_CORE_INFO("App Create!");
 }
 
 void Application::run() {
-    while(true){
-        
+    while(m_IsRunning) {
+        m_MainWindow.run();
     }
 }
 }

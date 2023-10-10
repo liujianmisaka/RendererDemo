@@ -2,6 +2,8 @@
 
 #include <string>
 
+#include "Window.hpp"
+
 namespace RendererDemo {
 
 struct ApplicationInfo {
@@ -19,6 +21,9 @@ public:
 
 private:
     RendererDemo::ApplicationInfo m_AppInfo;
+    RendererDemo::Window m_MainWindow;
+
+    bool m_IsRunning = true;
 };
 
 }
