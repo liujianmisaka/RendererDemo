@@ -6,8 +6,8 @@
 #include <spdlog/spdlog.h>
 #include <spdlog/fmt/ostr.h>
 #pragma warning(pop)
-
 #include <glm/gtx/string_cast.hpp>
+
 
 namespace RendererDemo {
 

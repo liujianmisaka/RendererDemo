@@ -10,15 +10,9 @@ enable_testing()
 find_package(glfw3 CONFIG REQUIRED)
 find_package(glm CONFIG REQUIRED)
 find_package(spdlog CONFIG REQUIRED)
+find_package(glad CONFIG REQUIRED)
 
-set(
-RendererDemo_SRC 
-    main.cpp 
-    Application.hpp Application.cpp
-    Window.hpp Window.cpp
-    Renderer.hpp Renderer.cpp
-    Log.hpp Log.cpp
-)
+file(GLOB_RECURSE RendererDemo_SRC engine/src/Misaka/*)
 
 add_executable(RendererDemo ${RendererDemo_SRC})
 target_link_libraries(
@@ -27,7 +21,10 @@ PRIVATE
     glfw
     glm::glm
     spdlog::spdlog
+    glad::glad
 )
+
+target_include_directories(RendererDemo PRIVATE engine/src)
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})

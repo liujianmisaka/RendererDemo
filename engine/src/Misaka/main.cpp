@@ -1,5 +1,6 @@
-#include "Application.hpp"
-#include "Log.hpp"
+#include "Misaka/Application.hpp"
+
+#include "Misaka/Log.hpp"
 
 
 int main() {
@@ -10,5 +11,8 @@ int main() {
     LOGGER_CORE_WARN("RendererDemo Running!");
 
     app.run();
+
+    app.close();
+
     LOGGER_CORE_WARN("RendererDemo Closed!");
 }
