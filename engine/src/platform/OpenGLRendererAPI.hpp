@@ -7,16 +7,15 @@ namespace RendererDemo {
 
 class OpenGLRendererAPI : public Renderer {
 public:
-    OpenGLRendererAPI();
-    virtual ~OpenGLRendererAPI() override;
+    virtual ~OpenGLRendererAPI() override{};
 
     virtual void init() override;
 
     virtual void close() override;
 
-    virtual void drawExample() override;
-
     virtual void update() override;
+
+    virtual void drawExample() override;
 
 private:
     GLuint VBO, VAO;

@@ -12,7 +12,5 @@ int main() {
 
     app.run();
 
-    app.close();
-
     LOGGER_CORE_WARN("RendererDemo Closed!");
 }

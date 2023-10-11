@@ -12,7 +12,7 @@ find_package(glm CONFIG REQUIRED)
 find_package(spdlog CONFIG REQUIRED)
 find_package(glad CONFIG REQUIRED)
 
-file(GLOB_RECURSE RendererDemo_SRC engine/src/Misaka/*)
+file(GLOB_RECURSE RendererDemo_SRC engine/src/*)
 
 add_executable(RendererDemo ${RendererDemo_SRC})
 target_link_libraries(

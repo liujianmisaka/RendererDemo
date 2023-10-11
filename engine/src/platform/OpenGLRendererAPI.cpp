@@ -6,10 +6,6 @@
 
 namespace RendererDemo {
 
-OpenGLRendererAPI::OpenGLRendererAPI() {}
-
-OpenGLRendererAPI::~OpenGLRendererAPI() {}
-
 void OpenGLRendererAPI::init() {
     // 初始化 glad
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
@@ -22,6 +18,18 @@ void OpenGLRendererAPI::close() {
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
     glDeleteProgram(shaderProgram);
+}
+
+void OpenGLRendererAPI::update() {
+    // 渲染指令
+    glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // 绑定顶点数组对象
+    glBindVertexArray(VAO);
+
+    // 绘制三角形
+    glDrawArrays(GL_TRIANGLES, 0, 3);
 }
 
 void OpenGLRendererAPI::drawExample() {
@@ -90,22 +98,9 @@ void OpenGLRendererAPI::drawExample() {
     // 解绑 VAO 和 VBO
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
-}
-
-void OpenGLRendererAPI::update() {
-    // 渲染指令
-    LOGGER_CORE_INFO("31");
-    glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
 
     // 使用着色器程序
     glUseProgram(shaderProgram);
-
-    // 绑定顶点数组对象
-    glBindVertexArray(VAO);
-
-    // 绘制三角形
-    glDrawArrays(GL_TRIANGLES, 0, 3);
 }
 
 } // namespace RendererDemo

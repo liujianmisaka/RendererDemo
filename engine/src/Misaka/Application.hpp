@@ -1,8 +1,7 @@
 #pragma once
 
-#include "Misaka/Renderer.hpp"
 #include "Misaka/Window.hpp"
-
+#include "Misaka/Renderer.hpp"
 
 namespace RendererDemo {
 
@@ -11,15 +10,15 @@ public:
     Application();
     ~Application();
 
-    void init();
-
-    void close();
-
     void run();
+
+private:
+    void init();
+    void close();
 
 private:
     RendererDemo::Window m_MainWindow;
     RendererDemo::Renderer* m_Renderer;
 };
 
-}
+} // namespace RendererDemo
