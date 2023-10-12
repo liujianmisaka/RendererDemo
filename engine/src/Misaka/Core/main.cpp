@@ -1,6 +1,6 @@
-#include "Misaka/Application.hpp"
+#include "Misaka/Core/Application.hpp"
 
-#include "Misaka/Log.hpp"
+#include "Misaka/Core/Log.hpp"
 
 
 int main() {

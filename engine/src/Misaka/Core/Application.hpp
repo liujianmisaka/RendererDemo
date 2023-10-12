@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Misaka/Window.hpp"
-#include "Misaka/Renderer.hpp"
+#include "Misaka/Core/Window.hpp"
+#include "Misaka/Renderer/Renderer.hpp"
 
 namespace RendererDemo {
 

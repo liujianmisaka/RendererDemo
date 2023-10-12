@@ -1,6 +1,6 @@
-#include "Misaka/Application.hpp"
+#include "Misaka/Core/Application.hpp"
 
-#include "platform/OpenGLRendererAPI.hpp"
+#include "platform/OpenGL/OpenGLRendererAPI.hpp"
 
 
 namespace RendererDemo {

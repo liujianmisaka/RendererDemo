@@ -1,8 +1,8 @@
-#include "platform/OpenGLRendererAPI.hpp"
+#include "platform/OpenGL/OpenGLRendererAPI.hpp"
 
 #include <iostream>
 
-#include "Misaka/Log.hpp"
+#include "Misaka/Core/Log.hpp"
 
 namespace RendererDemo {
 
