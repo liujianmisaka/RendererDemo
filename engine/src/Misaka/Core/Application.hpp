@@ -1,8 +1,10 @@
 #pragma once
 
 #include <string>
+#include <vector>
 #include "Misaka/Core/Window.hpp"
-#include "Misaka/Renderer/Renderer.hpp"
+#include "Misaka/Core/Renderer.hpp"
+#include "Misaka/Core/Scene.hpp"
 
 namespace RendererDemo {
 
@@ -25,6 +27,9 @@ private:
     RendererDemo::Renderer* m_Renderer;
 
     std::string m_AppName = "Application";
+
+	std::vector<RendererDemo::Scene> m_Scenes;
+	RendererDemo::Scene m_MainScene;
 };
 
 Application* CreateApplicationInstace();

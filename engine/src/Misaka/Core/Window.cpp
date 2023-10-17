@@ -1,6 +1,6 @@
 #include "Misaka/Core/Window.hpp"
 
-#include "Misaka/Core/Log.hpp"
+#include "Misaka/Utils/Log.hpp"
 #include <GLFW/glfw3.h>
 
 namespace RendererDemo {

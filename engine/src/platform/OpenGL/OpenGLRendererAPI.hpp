@@ -1,4 +1,4 @@
-#include "Misaka/Renderer/Renderer.hpp"
+#include "Misaka/Core/Renderer.hpp"
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>

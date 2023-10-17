@@ -1,3 +1,5 @@
+#pragma once
+
 namespace RendererDemo {
 
 class Scene {
@@ -8,7 +10,7 @@ public:
 	void Render();
 	
 private:
-
+	
 };
 
 } // namespace RendererDemo

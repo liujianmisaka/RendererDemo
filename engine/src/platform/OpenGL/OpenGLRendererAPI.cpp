@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-#include "Misaka/Core/Log.hpp"
+#include "Misaka/Utils/Log.hpp"
 
 namespace RendererDemo {
 

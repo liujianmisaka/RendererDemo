@@ -1,5 +1,5 @@
-#include "Misaka/Core/TransactionType.hpp"
-#include "Misaka/Core/Delegate.hpp"
+#include "Misaka/Utils/TransactionType.hpp"
+#include "Misaka/Utils/Delegate.hpp"
 
 
 namespace RendererDemo {

@@ -28,8 +28,10 @@ void Application::Close() {
 
 void Application::Run() {
     while (!m_MainWindow.shouldClose()) {
-        m_Renderer->update();
-        m_MainWindow.update();
+        // m_Renderer->update();
+        // m_MainWindow.update();
+		m_MainScene.Update();
+		m_MainScene.Render();
     }
 }
 } // namespace RendererDemo

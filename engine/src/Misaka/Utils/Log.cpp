@@ -1,4 +1,4 @@
-#include "Misaka/Core/Log.hpp"
+#include "Misaka/Utils/Log.hpp"
 
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include <spdlog/sinks/basic_file_sink.h>
