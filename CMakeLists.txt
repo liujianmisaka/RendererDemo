@@ -16,7 +16,7 @@ find_package(spdlog CONFIG REQUIRED)
 find_package(glad CONFIG REQUIRED)
 find_package(imgui CONFIG REQUIRED)
 
-file(GLOB_RECURSE RendererDemo_SRC engine/src/*)
+file(GLOB_RECURSE RendererDemo_SRC engine/src/* demo/src/*)
 
 add_executable(RendererDemo ${RendererDemo_SRC})
 target_link_libraries(

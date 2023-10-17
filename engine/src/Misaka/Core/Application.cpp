@@ -6,27 +6,27 @@
 namespace RendererDemo {
 
 Application::Application() {
-    Application::init();
+    Application::Init();
 }
 
 Application::~Application() {
-    Application::close();
+    Application::Close();
     delete m_Renderer;
 }
 
-void Application::init() {
+void Application::Init() {
     m_MainWindow.init();
-    m_Renderer = new OpenGLRendererAPI;
+    m_Renderer = new OpenGLRendererAPI();
     m_Renderer->init();
     m_Renderer->drawExample();
 }
 
-void Application::close() {
+void Application::Close() {
     m_Renderer->close();
     m_MainWindow.close();
 }
 
-void Application::run() {
+void Application::Run() {
     while (!m_MainWindow.shouldClose()) {
         m_Renderer->update();
         m_MainWindow.update();
