@@ -15,6 +15,7 @@ find_package(glm CONFIG REQUIRED)
 find_package(spdlog CONFIG REQUIRED)
 find_package(glad CONFIG REQUIRED)
 find_package(imgui CONFIG REQUIRED)
+find_package(EnTT CONFIG REQUIRED)
 
 file(GLOB_RECURSE RendererDemo_SRC engine/src/* demo/src/*)
 
@@ -27,6 +28,7 @@ PRIVATE
     spdlog::spdlog
     glad::glad
     imgui::imgui
+	EnTT::EnTT
 )
 
 target_include_directories(RendererDemo PRIVATE engine/src)

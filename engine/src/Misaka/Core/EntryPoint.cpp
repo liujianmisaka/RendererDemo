@@ -11,8 +11,10 @@ int main() {
 
     LOGGER_CORE_WARN("RendererDemo Running!");
 	
-    LOGGER_CORE_INFO(app->GetAppName().c_str());
+    LOGGER_CORE_INFO(app->GetClassName().c_str());
+	app->Initialize();
     app->Run();
+	app->Destroy();
 
     delete app;
 

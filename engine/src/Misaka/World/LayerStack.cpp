@@ -1,4 +1,4 @@
-#include "Misaka/Core/LayerStack.hpp"
+#include "Misaka/World/LayerStack.hpp"
 
 namespace RendererDemo {
 
@@ -14,9 +14,9 @@ void LayerStack::OnUpdate() {
         layer->OnUpdate();
 }
 
-void LayerStack::OnEvent(Event& event) {
+void LayerStack::OnRender() {
     for (Layer* layer : m_Layers)
-        layer->OnEvent(event);
+        layer->OnRender();
 }
 
 void LayerStack::PushLayer(Layer* layer) {

@@ -1,4 +1,4 @@
-#include "Misaka/Core/Renderer.hpp"
+#include "Misaka/Renderer/Renderer.hpp"
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -9,9 +9,9 @@ class OpenGLRendererAPI : public Renderer {
 public:
     virtual ~OpenGLRendererAPI() override{};
 
-    virtual void Init() override;
+    virtual void Initialize() override;
 
-    virtual void Close() override;
+    virtual void Destroy() override;
 
     virtual void Render(RendererDemo::Scene* scene = nullptr) override;
 

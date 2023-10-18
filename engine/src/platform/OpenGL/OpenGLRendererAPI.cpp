@@ -6,7 +6,7 @@
 
 namespace RendererDemo {
 
-void OpenGLRendererAPI::Init() {
+void OpenGLRendererAPI::Initialize() {
     // 初始化 glad
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
         LOGGER_CORE_ERROR("Failed to initialize glad");
@@ -14,7 +14,7 @@ void OpenGLRendererAPI::Init() {
     }
 }
 
-void OpenGLRendererAPI::Close() {
+void OpenGLRendererAPI::Destroy() {
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
     glDeleteProgram(shaderProgram);

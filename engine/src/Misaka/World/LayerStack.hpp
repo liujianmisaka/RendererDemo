@@ -2,7 +2,8 @@
 
 #include <vector>
 
-#include "Misaka/Core/Layer.hpp"
+#include "Misaka/World/Layer.hpp"
+#include "Misaka/Event/Event.hpp"
 
 namespace RendererDemo {
 	class LayerStack {
@@ -10,8 +11,8 @@ namespace RendererDemo {
         LayerStack() = default;
 		~LayerStack();
 
-        void OnEvent(Event& event);
         void OnUpdate();
+		void OnRender();
 
 		void PushLayer(Layer* layer);
 		void PushOverlay(Layer* overlay);

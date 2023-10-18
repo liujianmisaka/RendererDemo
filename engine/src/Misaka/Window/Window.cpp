@@ -1,15 +1,11 @@
-#include "Misaka/Core/Window.hpp"
+#include "Misaka/Window/Window.hpp"
 
 #include "Misaka/Utils/Log.hpp"
 #include <GLFW/glfw3.h>
 
 namespace RendererDemo {
 
-Window::Window() {}
-
-Window::~Window() {}
-
-void Window::Init() {
+void Window::Create() {
     if (!glfwInit()) {
         LOGGER_CORE_ERROR("Failed to init GLFW!");
         exit(-1);
@@ -32,14 +28,12 @@ void Window::Init() {
     glfwSetFramebufferSizeCallback(m_GLFWWindow, windowResizeCallback);
 }
 
-void Window::Close() {
+void Window::Destroy() {
     glfwDestroyWindow(m_GLFWWindow);
     glfwTerminate();
 }
 
-bool Window::ShouldClose() const { return glfwWindowShouldClose(m_GLFWWindow); }
-
-void Window::Update() {
+void Window::OnUpdate() {
     // Render here
 
     // 交换缓冲区与处理事件

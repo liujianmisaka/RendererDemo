@@ -1,4 +1,4 @@
-#include "Misaka/Core/Entity.hpp"
+#include "Misaka/World/Entity.hpp"
 
 namespace RendererDemo {
 

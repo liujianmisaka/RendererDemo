@@ -1,30 +1,32 @@
 #pragma once
 
 #include <string>
-#include "Misaka/Core/Window.hpp"
-#include "Misaka/Core/Scene.hpp"
-#include "Misaka/Core/Renderer.hpp"
+#include "Misaka/Core/IWindow.hpp"
+#include "Misaka/Core/IWorld.hpp"
+#include "Misaka/Core/IRenderer.hpp"
 
 namespace RendererDemo {
 
 class Application {
 public:
-    Application();
-    virtual ~Application();
+    Application() = default;
+    virtual ~Application() = default;
+
+    virtual void Initialize();
+    virtual void Destroy();
 
     void Run();
 
-    virtual const std::string GetClassName() { return m_ClassName; }
-private:
-	void Init();
-	void Close();
+    virtual const std::string& GetClassName() { return m_ClassName; }
 
 private:
     std::string m_ClassName = "Application";
 
-    RendererDemo::Window* m_Window;
-	RendererDemo::Scene* m_MainScene;
-	RendererDemo::Renderer* m_Renderer;
+    RendererDemo::IWindow* m_Window;
+    RendererDemo::IWorld* m_MainWorld;
+    RendererDemo::IRenderer* m_Renderer;
+
+	float m_LastTime = 0;
 };
 
 Application* CreateApplicationInstace();
