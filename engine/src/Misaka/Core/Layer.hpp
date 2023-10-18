@@ -8,16 +8,17 @@
 namespace RendererDemo {
 	class Layer {
 	public:
-		Layer(const std::string& name = "Layer");
+		Layer();
         virtual ~Layer() = default;
 
 		virtual void OnUpdate() {}
 		virtual void Render() {}
 		virtual void OnEvent(Event& event) {}
 
-	    const std::string& GetName() const { return m_DebugName; }
-	protected:
-		std::string m_DebugName;
+	    virtual const std::string GetClassName() { return m_ClassName; }
+
+	private:
+		std::string m_ClassName = "Layer";
 
 	};
 }

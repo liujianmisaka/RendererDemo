@@ -9,7 +9,7 @@ Window::Window() {}
 
 Window::~Window() {}
 
-void Window::init() {
+void Window::Init() {
     if (!glfwInit()) {
         LOGGER_CORE_ERROR("Failed to init GLFW!");
         exit(-1);
@@ -32,14 +32,14 @@ void Window::init() {
     glfwSetFramebufferSizeCallback(m_GLFWWindow, windowResizeCallback);
 }
 
-void Window::close() {
+void Window::Close() {
     glfwDestroyWindow(m_GLFWWindow);
     glfwTerminate();
 }
 
-bool Window::shouldClose() const { return glfwWindowShouldClose(m_GLFWWindow); }
+bool Window::ShouldClose() const { return glfwWindowShouldClose(m_GLFWWindow); }
 
-void Window::update() {
+void Window::Update() {
     // Render here
 
     // 交换缓冲区与处理事件

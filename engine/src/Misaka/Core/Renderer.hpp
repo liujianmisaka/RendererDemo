@@ -8,13 +8,11 @@ class Renderer {
 public:
     virtual ~Renderer() = default;
 
-    virtual void init() = 0;
+    virtual void Init() = 0;
 
-    virtual void close() = 0;
+    virtual void Close() = 0;
 
-    virtual void update() = 0;
-
-	virtual void Render(Scene* scene);
+	virtual void Render(RendererDemo::Scene* scene = nullptr);
     
     // draw a triangle in window.
     virtual void drawExample() = 0;

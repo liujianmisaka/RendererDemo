@@ -10,13 +10,13 @@ public:
     Window();
     ~Window();
 
-    void init();
+    virtual void Init();
 
-    void close();
+    virtual void Close();
 
-    bool shouldClose() const;
+    virtual void Update();
 
-    void update();
+    virtual bool ShouldClose() const;
 
     void* GetNativeWindow() const { return m_GLFWWindow; }
 

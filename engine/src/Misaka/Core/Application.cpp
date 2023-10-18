@@ -1,37 +1,24 @@
 #include "Misaka/Core/Application.hpp"
 
-#include "platform/OpenGL/OpenGLRendererAPI.hpp"
+// #include "platform/OpenGL/OpenGLRendererAPI.hpp"
 
 
 namespace RendererDemo {
 
 Application::Application() {
-    Application::Init();
+    
 }
 
 Application::~Application() {
-    Application::Close();
-    delete m_Renderer;
+    
 }
 
-void Application::Init() {
-    m_MainWindow.init();
-    m_Renderer = new OpenGLRendererAPI();
-    m_Renderer->init();
-    m_Renderer->drawExample();
-}
-
-void Application::Close() {
-    m_Renderer->close();
-    m_MainWindow.close();
-}
 
 void Application::Run() {
-    while (!m_MainWindow.shouldClose()) {
-        // m_Renderer->update();
-        // m_MainWindow.update();
-		m_MainScene.Update();
-		m_MainScene.Render();
+    while (!m_Window->ShouldClose()) {
+		m_Window->Update();    // Event
+		m_MainScene->Update();
+		m_Renderer->Render(m_MainScene);
     }
 }
 } // namespace RendererDemo

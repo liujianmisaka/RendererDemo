@@ -2,11 +2,18 @@
 
 namespace RendererDemo {
 
-bool Entity::AddComponent() {
+template<typename T>
+T& Entity::AddComponent(T& component) {
 	return false;
 }
 
-bool Entity::HasComponent() {
+template<typename T>
+T& Entity::RemoveComponent(T& component) {
+	return false;
+}
+
+template<typename T>
+bool Entity::HasComponent(T& component) {
 	return false;
 }
 

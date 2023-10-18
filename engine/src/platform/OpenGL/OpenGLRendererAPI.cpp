@@ -6,7 +6,7 @@
 
 namespace RendererDemo {
 
-void OpenGLRendererAPI::init() {
+void OpenGLRendererAPI::Init() {
     // 初始化 glad
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
         LOGGER_CORE_ERROR("Failed to initialize glad");
@@ -14,13 +14,13 @@ void OpenGLRendererAPI::init() {
     }
 }
 
-void OpenGLRendererAPI::close() {
+void OpenGLRendererAPI::Close() {
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
     glDeleteProgram(shaderProgram);
 }
 
-void OpenGLRendererAPI::update() {
+void OpenGLRendererAPI::Render(RendererDemo::Scene* scene) {
     // 渲染指令
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);

@@ -9,11 +9,11 @@ class OpenGLRendererAPI : public Renderer {
 public:
     virtual ~OpenGLRendererAPI() override{};
 
-    virtual void init() override;
+    virtual void Init() override;
 
-    virtual void close() override;
+    virtual void Close() override;
 
-    virtual void update() override;
+    virtual void Render(RendererDemo::Scene* scene = nullptr) override;
 
     virtual void drawExample() override;
 
