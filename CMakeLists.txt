@@ -17,7 +17,10 @@ find_package(glad CONFIG REQUIRED)
 find_package(imgui CONFIG REQUIRED)
 find_package(EnTT CONFIG REQUIRED)
 
-file(GLOB_RECURSE RendererDemo_SRC engine/src/* demo/src/*)
+file(
+GLOB_RECURSE RendererDemo_SRC 
+	Engine/Source/*
+)
 
 add_executable(RendererDemo ${RendererDemo_SRC})
 target_link_libraries(
@@ -31,7 +34,7 @@ PRIVATE
 	EnTT::EnTT
 )
 
-target_include_directories(RendererDemo PRIVATE engine/src)
+target_include_directories(RendererDemo PRIVATE Engine/Source)
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
