@@ -1,7 +1,6 @@
 #include <functional>
 #include <vector>
 
-
 namespace RendererDemo {
 
 // 通用的委托类

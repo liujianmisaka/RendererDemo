@@ -1,7 +1,6 @@
 #include "Runtime/Core/TransactionType.hpp"
 #include "Runtime/Core/Delegate.hpp"
 
-
 namespace RendererDemo {
 
 // 事务处理器类

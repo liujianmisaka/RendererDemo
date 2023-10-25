@@ -1,6 +1,5 @@
 #pragma once
 
-
 namespace RendererDemo {
 
 enum class TransactionType {

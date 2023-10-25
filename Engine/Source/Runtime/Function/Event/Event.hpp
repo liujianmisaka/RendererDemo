@@ -1,4 +1,3 @@
-
 namespace RendererDemo {
 
 // 事件基类
@@ -8,7 +7,5 @@ public:
 
     virtual void EventHandler() = 0;
 };
-
-
 
 } // namespace RendererDemo

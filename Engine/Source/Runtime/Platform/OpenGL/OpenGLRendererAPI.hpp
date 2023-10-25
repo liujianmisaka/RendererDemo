@@ -1,42 +1,42 @@
-#include "Runtime/Function/Renderer/Renderer.hpp"
+// #include "Runtime/Function/Renderer/Renderer.hpp"
 
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
+// #include <glad/glad.h>
+// #include <GLFW/glfw3.h>
 
-namespace RendererDemo {
+// namespace RendererDemo {
 
-class OpenGLRendererAPI : public Renderer {
-public:
-    virtual ~OpenGLRendererAPI() override{};
+// class OpenGLRendererAPI : public Renderer {
+// public:
+//     virtual ~OpenGLRendererAPI() override{};
 
-    virtual void Initialize() override;
+//     virtual void Initialize() override;
 
-    virtual void Destroy() override;
+//     virtual void Destroy() override;
 
-    virtual void Render(RendererDemo::Scene* scene = nullptr) override;
+//     virtual void Render(RendererDemo::Scene* scene = nullptr) override;
 
-    virtual void drawExample() override;
+//     virtual void drawExample() override;
 
-private:
-    GLuint VBO, VAO;
-    GLuint shaderProgram;
+// private:
+//     GLuint VBO, VAO;
+//     GLuint shaderProgram;
 
-    // 顶点着色器代码
-    const char* vertexShaderSource = R"(
-        #version 330 core
-        layout (location = 0) in vec3 aPos;
-        void main() {
-            gl_Position = vec4(aPos, 1.0);
-        }
-    )";
+//     // 顶点着色器代码
+//     const char* vertexShaderSource = R"(
+//         #version 330 core
+//         layout (location = 0) in vec3 aPos;
+//         void main() {
+//             gl_Position = vec4(aPos, 1.0);
+//         }
+//     )";
 
-    // 片段着色器代码
-    const char* fragmentShaderSource = R"(
-        #version 330 core
-        out vec4 FragColor;
-        void main() {
-            FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);
-        }
-    )";
-};
-} // namespace RendererDemo
+//     // 片段着色器代码
+//     const char* fragmentShaderSource = R"(
+//         #version 330 core
+//         out vec4 FragColor;
+//         void main() {
+//             FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);
+//         }
+//     )";
+// };
+// } // namespace RendererDemo
