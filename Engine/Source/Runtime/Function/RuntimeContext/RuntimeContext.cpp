@@ -1,6 +1,7 @@
 #include "Runtime/Function/RuntimeContext/RuntimeContext.hpp"
 
 #include <memory>
+#include "GLFW/glfw3.h"
 #include "Runtime/Core/Log/LogSystem.hpp"
 #include "Runtime/Function/Framework/Manager/GameWorldManager.hpp"
 #include "Runtime/Function/Renderer/System/RendererSystem.hpp"
@@ -21,6 +22,25 @@ void RuntimeContext::StartSystem() {
 
     m_window_system = std::make_shared<WindowSystem>();
     m_window_system->Initialize();
+
+    m_window_system->AddTransactionHandler<TransactionType::WindowClose>([](GLFWwindow* window) { std::cout << "window close" << std::endl; });
+    m_window_system->AddTransactionHandler<TransactionType::WindowResize>(
+        [](GLFWwindow* window, int width, int height) { std::cout << "window resize" << std::endl; });
+    m_window_system->AddTransactionHandler<TransactionType::KeyPressed>([](GLFWwindow* window, int key, int scancode, int action, int mods) {
+        if (key == GLFW_KEY_LEFT_SHIFT || key == GLFW_KEY_RIGHT_SHIFT) {
+            return;
+        }
+		if (key == GLFW_KEY_LEFT_CONTROL || key == GLFW_KEY_RIGHT_CONTROL) {
+            return;
+        }
+		if (key == GLFW_KEY_LEFT_ALT || key == GLFW_KEY_RIGHT_ALT) {
+            return;
+        }
+        const char* keyName = glfwGetKeyName(key, scancode);
+        std::cout << keyName << std::endl;
+    });
+    m_window_system->AddTransactionHandler<TransactionType::KeyRepeated>(
+        [](GLFWwindow* window, int key, int scancode, int action, int mods) { std::cout << "key repeated" << std::endl; });
 }
 
 void RuntimeContext::ShutdownSystem() {

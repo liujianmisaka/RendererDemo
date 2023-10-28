@@ -18,18 +18,19 @@ private:
 };
 
 // template must be completed in declaration
-
 template <typename... Args>
 void Delegate<Args...>::Add(FunctionType func) {
     functions.push_back(std::move(func));
 }
 
+// template must be completed in declaration
 template <typename... Args>
 void Delegate<Args...>::Remove(FunctionType func) {
     auto it = std::remove(functions.begin(), functions.end(), func);
     functions.erase(it, functions.end());
 }
 
+// template must be completed in declaration
 template <typename... Args>
 void Delegate<Args...>::Broadcast(Args... args) const {
     for (const auto& func : functions) {
