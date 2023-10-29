@@ -1,6 +1,5 @@
 #include "Runtime/Engine.hpp"
 #include "Editor/Editor.hpp"
-// #include "Runtime/Test/HandlerTest.hpp"
 
 int main() {
 

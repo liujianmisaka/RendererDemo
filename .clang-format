@@ -15,7 +15,7 @@ AllowAllConstructorInitializersOnNextLine: false
 # AllowAllParametersOfDeclarationOnNextLine: true
 # AllowShortBlocksOnASingleLine: Never
 AllowShortCaseLabelsOnASingleLine: true
-# AllowShortFunctionsOnASingleLine: All
+AllowShortFunctionsOnASingleLine: false
 # AllowShortLambdasOnASingleLine: All
 # AllowShortIfStatementsOnASingleLine: WithoutElse
 # AllowShortLoopsOnASingleLine: true
@@ -51,7 +51,7 @@ BreakBeforeBraces: Attach
 # BreakConstructorInitializers: BeforeColon
 # BreakAfterJavaFieldAnnotations: false
 # BreakStringLiterals: true
-ColumnLimit: 160
+ColumnLimit: 120
 CommentPragmas: "^ NOLINT:"
 # CompactNamespaces: false
 # ConstructorInitializerAllOnOneLineOrOnePerLine: true
