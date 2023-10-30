@@ -50,6 +50,9 @@ private:
     WindowDelegateData m_window_delegate_data;
 
 public:
+    /* -------------------------------------------------------------------------- */
+    /*                  NOTE: TransactionType Function Dispatcher                 */
+    /* -------------------------------------------------------------------------- */
     template <TransactionType T, typename FuncType>
     void AddTransactionHandler(FuncType function) {
         if constexpr (T == TransactionType::WindowClose) {
@@ -76,11 +79,13 @@ public:
     }
 
 private:
-    // -----------------------------------
-    // NOTE: GLFW callback functions
-    // -----------------------------------
+    /* -------------------------------------------------------------------------- */
+    /*                        NOTE: GLFW callback functions                       */
+    /* -------------------------------------------------------------------------- */
 
-    static void errorCallback(int error, const char* description) { std::cerr << "GLFW Error " << error << ": " << description << std::endl; }
+    static void errorCallback(int error, const char* description) {
+        std::cerr << "GLFW Error " << error << ": " << description << std::endl;
+    }
 
     static void WindowCloseCallback(GLFWwindow* window) {
         WindowSystem* system = static_cast<WindowSystem*>(glfwGetWindowUserPointer(window));

@@ -25,7 +25,7 @@ private:
 
 private:
     // Original Camrea Parameter
-    float m_fov{45.0f};        // Field of View
+    float m_fov{45.0f};         // Field of View
     float m_aspect_ratio{1.0f}; // height / width
     float m_near_clip{0.1f};
     float m_far_clip{100.0f};
