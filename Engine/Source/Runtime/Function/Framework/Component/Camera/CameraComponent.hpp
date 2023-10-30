@@ -25,19 +25,19 @@ private:
 
 private:
     // Original Camrea Parameter
-    float m_Fov{45.0f};        // Field of View
-    float m_AspectRatio{1.0f}; // height / width
-    float m_NearClip{0.1f};
-    float m_FarClip{100.0f};
-    glm::vec3 m_Position{0.0f, 0.0f, 0.0f};
-    glm::vec3 m_Up{0.0f, 1.0f, 0.0f};
-    glm::vec3 m_Forward{0.0f, 0.0f, -1.0f};
+    float m_fov{45.0f};        // Field of View
+    float m_aspect_ratio{1.0f}; // height / width
+    float m_near_clip{0.1f};
+    float m_far_clip{100.0f};
+    glm::vec3 m_position{0.0f, 0.0f, 0.0f};
+    glm::vec3 m_up{0.0f, 1.0f, 0.0f};
+    glm::vec3 m_forward{0.0f, 0.0f, -1.0f};
 
-    CameraMod m_CameraMod = CameraMod::Free;
+    CameraMod m_camera_mod = CameraMod::Free;
 
     // Generated Parameter
-    glm::mat4 m_ViewMatrix;
-    glm::mat4 m_ProjectionMatrix;
+    glm::mat4 m_view_matrix;
+    glm::mat4 m_projection_matrix;
 };
 
 } // namespace RendererDemo

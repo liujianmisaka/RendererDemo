@@ -3,7 +3,7 @@
 namespace RendererDemo {
 
 CameraComponent::CameraComponent(float fov, float aspectRatio, float nearClip, float farClip)
-    : m_Fov(fov), m_AspectRatio(aspectRatio), m_NearClip(nearClip), m_FarClip(farClip) {
+    : m_fov(fov), m_aspect_ratio(aspectRatio), m_near_clip(nearClip), m_far_clip(farClip) {
     UpdateViewMatrix();
     UpdateViewMatrix();
 }
@@ -14,11 +14,11 @@ void CameraComponent::Tick(float ts) {
 }
 
 void CameraComponent::UpdateViewMatrix() {
-    m_ViewMatrix = glm::lookAt(m_Position, m_Position + m_Forward, m_Up);
+    m_view_matrix = glm::lookAt(m_position, m_position + m_forward, m_up);
 }
 
 void CameraComponent::UpdateProjectionMatrix() {
-    m_ProjectionMatrix = glm::perspective(glm::radians(m_Fov), m_AspectRatio, m_NearClip, m_FarClip);
+    m_projection_matrix = glm::perspective(glm::radians(m_fov), m_aspect_ratio, m_near_clip, m_far_clip);
 }
 
 } // namespace RendererDemo
