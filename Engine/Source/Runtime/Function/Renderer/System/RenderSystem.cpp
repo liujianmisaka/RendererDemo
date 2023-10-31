@@ -10,18 +10,21 @@ namespace RendererDemo {
 
 void RendererSystem::Initialize(RendererSystemInitInfo render_system_init_info) {
     m_rhi = CreateGrapicsAPIInstance(render_system_init_info.graphics_api);
-	RHIInitInfo rhi_init_info;
-	rhi_init_info.window_system = render_system_init_info.window_system;
+    RHIInitInfo rhi_init_info;
+    rhi_init_info.window_system = render_system_init_info.window_system;
     m_rhi->Initialize(rhi_init_info);
 }
 
-void RendererSystem::Clear() {}
+void RendererSystem::Clear() {
+}
 
-void RendererSystem::Tick(float ts) {}
+void RendererSystem::Tick(float ts) {
+	m_rhi->Tick();
+}
 
-// -----------------------------------------------------------------------
-// ------------------- private apis --------------------------------------
-// -----------------------------------------------------------------------
+/* -------------------------------------------------------------------------- */
+/*                                private apis                                */
+/* -------------------------------------------------------------------------- */
 
 std::shared_ptr<RHI> RendererSystem::CreateGrapicsAPIInstance(GraphicsAPI api) {
     if (api == GraphicsAPI::OpenGL) {

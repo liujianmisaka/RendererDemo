@@ -29,7 +29,7 @@ public:
     WindowSystem() = default;
     ~WindowSystem() = default;
 
-    void Initialize(int width = 1280, int height = 960, const std::string& title = "Misaka Engine");
+    void Initialize(int width = 960, int height = 960, const std::string& title = "Misaka Engine");
     void Clear();
 
     bool ShouldClose() const;

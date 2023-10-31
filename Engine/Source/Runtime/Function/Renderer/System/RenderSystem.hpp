@@ -24,6 +24,10 @@ public:
 
     void Tick(float ts);
 
+    std::shared_ptr<RHI> GetRHI() {
+        return m_rhi;
+    }
+
 private:
     std::shared_ptr<RHI> CreateGrapicsAPIInstance(GraphicsAPI api);
 

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <vulkan/vulkan.hpp>
-#include <GLFW/glfw3.h>
+#include <vulkan/vulkan_core.h>
 #include "Runtime/Function/Renderer/RHI/RHI.hpp"
 
 namespace RendererDemo {
@@ -11,7 +11,16 @@ public:
     VulkanRHI(){};
     virtual ~VulkanRHI() = default;
 
-    virtual void Initialize(RHIInitInfo rhi_init_info) override;
+    virtual void Initialize(RHIInitInfo rhi_init_info) override{};
+
+    virtual void CreateBuffer(BufferInfo buffer_info) override{};
+    virtual void CreateVertexLayout(RawVertexLayout raw_vertex_buffer_layout) override{};
+    virtual void CreateVertexArray() override{};
+
+    virtual void CreateShader(ShaderInfo shader_info) override{};
+    virtual void CreateProgram() override{};
+
+    virtual void Tick() override{};
 
 private:
     GLFWwindow* window;
