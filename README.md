@@ -1,2 +1,45 @@
-# 简介
-在图形学学习中，我们希望对所学的知识进行立即使用，但由于图形学实现涉及多个方面，因此通常需要某种框架。该项目专注于基础的图形学渲染，旨在进行图形学各个阶段的学习。
+# dev log
+
+[ 2023-10-25 ] New engine framework.
+[ 2023-10-10 ] 使用 GLFW 显示一个窗口.
+
+# 命名规范
+
+
+1. 文件命名
+
+- C++头文件: `MyFile.hpp`
+- C++源文件: `MyFile.cpp`
+
+1. 类型(class/struct/enum/typedef/using)
+
+- `class MyEngine;`
+
+3. 变量
+
+- 普通变量: `int table_name`
+- 类成员变量: `m_table_name`
+- 结构体成员变量: `table_name`
+
+4. 常量
+
+- `const kMaxPoolSize = 10;`
+
+5. 函数命名
+
+- `void MyFunction();`
+
+6. 枚举值
+
+```
+enum MyEnum {
+	None = 0,
+	Windows,
+	Linux
+};
+```
+
+7. 宏
+
+- `#define MY_DEBUG_FLAG`
+
