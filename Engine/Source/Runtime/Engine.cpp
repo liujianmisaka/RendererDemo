@@ -24,13 +24,12 @@ void MisakaEngine::ShutdownEngine() {
 
 void MisakaEngine::Run() {
     while (!g_runtime_context.m_window_system->ShouldClose()) {
-		g_runtime_context.m_window_system->PollEvents();
-
         float timestep = 0;
         g_runtime_context.m_game_world_manager->Tick(timestep);
         g_runtime_context.m_renderer_system->Tick(timestep);
 
 		g_runtime_context.m_window_system->SwapBuffers();
+		g_runtime_context.m_window_system->PollEvents();
     }
 }
 
