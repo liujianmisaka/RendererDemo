@@ -81,6 +81,15 @@ void OpenGLRHI::Tick() {
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
+	// 获取当前的系统时间
+    float time = static_cast<float>(glfwGetTime());
+
+    // 获取uniform变量的位置
+    GLint timeLocation = glGetUniformLocation(m_program.program_id, "u_time");
+
+    // 设置uniform变量的值
+    glUniform1f(timeLocation, time);
+
     // TODO: Add default draw buffer when no draw buffer is created
     assert(m_draw_buffers.size() > 0);
 
