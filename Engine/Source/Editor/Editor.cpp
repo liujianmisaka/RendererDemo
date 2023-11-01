@@ -1,10 +1,10 @@
 #include "Editor/Editor.hpp"
 #include <memory>
 #include <filesystem>
+#include <iostream>
 #include "Runtime/Engine.hpp"
 #include "Runtime/Function/Renderer/RHI/RHI.hpp"
 #include "Runtime/Function/RuntimeContext/RuntimeContext.hpp"
-#include "Runtime/Function/Renderer/System/WindowSystem.hpp"
 #include "Runtime/Function/Renderer/System/RenderSystem.hpp"
 #include "Runtime/Function/Renderer/RHI/Interface/Buffer.hpp"
 #include "Runtime/Function/Renderer/RHI/Interface/Shader.hpp"
@@ -24,34 +24,7 @@ void MisakaEditor::Run() {
 }
 
 void MisakaEditor::Process() {
-    std::shared_ptr<WindowSystem> window_system = g_runtime_context.m_window_system;
     std::shared_ptr<RHI> rhi = g_runtime_context.m_renderer_system->GetRHI();
-    /* -------------------------------------------------------------------------- */
-    /*                             Default GLFW Event                             */
-    /* -------------------------------------------------------------------------- */
-    window_system->AddTransactionHandler<TransactionType::WindowClose>(
-        [](GLFWwindow* window) { std::cout << "window close" << std::endl; });
-    window_system->AddTransactionHandler<TransactionType::WindowResize>(
-        [](GLFWwindow* window, int width, int height) { std::cout << "window resize" << std::endl; });
-    window_system->AddTransactionHandler<TransactionType::KeyPressed>(
-        [](GLFWwindow* window, int key, int scancode, int action, int mods) {
-            if (key == GLFW_KEY_LEFT_SHIFT || key == GLFW_KEY_RIGHT_SHIFT) {
-                return;
-            }
-            if (key == GLFW_KEY_LEFT_CONTROL || key == GLFW_KEY_RIGHT_CONTROL) {
-                return;
-            }
-            if (key == GLFW_KEY_LEFT_ALT || key == GLFW_KEY_RIGHT_ALT) {
-                return;
-            }
-            const char* keyName = glfwGetKeyName(key, scancode);
-            std::cout << keyName << std::endl;
-        });
-    window_system->AddTransactionHandler<TransactionType::KeyRepeated>(
-        [](GLFWwindow* window, int key, int scancode, int action, int mods) {
-            std::cout << "key repeated" << std::endl;
-        });
-
     /* -------------------------------------------------------------------------- */
     /*                               Test OpenGLRHI                               */
     /* -------------------------------------------------------------------------- */

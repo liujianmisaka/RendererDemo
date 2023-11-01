@@ -5,6 +5,7 @@
 #include "Runtime/Function/Framework/Manager/GameWorldManager.hpp"
 #include "Runtime/Function/Renderer/System/RenderSystem.hpp"
 #include "Runtime/Function/Renderer/System/WindowSystem.hpp"
+#include "Runtime/Function/event/EventSystem.hpp"
 
 namespace RendererDemo {
 
@@ -24,6 +25,9 @@ void RuntimeContext::StartSystem() {
 	render_system_init_info.graphics_api = GraphicsAPI::OpenGL;
     m_renderer_system = std::make_shared<RendererSystem>();
     m_renderer_system->Initialize(render_system_init_info);
+
+	m_event_system = std::make_shared<EventSystem>();
+	m_event_system->Initialize(m_window_system);
 }
 
 void RuntimeContext::ShutdownSystem() {

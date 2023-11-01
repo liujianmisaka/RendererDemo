@@ -8,6 +8,7 @@ class LogSystem;
 class GameWorldManager;
 class RendererSystem;
 class WindowSystem;
+class EventSystem;
 
 class RuntimeContext {
 public:
@@ -19,6 +20,7 @@ public:
     std::shared_ptr<GameWorldManager> m_game_world_manager;
     std::shared_ptr<RendererSystem> m_renderer_system;
 	std::shared_ptr<WindowSystem> m_window_system;
+	std::shared_ptr<EventSystem> m_event_system;
 };
 
 extern RuntimeContext g_runtime_context;
