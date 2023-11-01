@@ -16,6 +16,7 @@ find_package(spdlog CONFIG REQUIRED)
 find_package(glad CONFIG REQUIRED)
 find_package(imgui CONFIG REQUIRED)
 find_package(EnTT CONFIG REQUIRED)
+find_package(VulkanHeaders CONFIG)
 
 file(
 GLOB_RECURSE RendererDemo_SRC 
@@ -32,6 +33,7 @@ PRIVATE
     glad::glad
     imgui::imgui
 	EnTT::EnTT
+	Vulkan::Headers
 )
 
 target_include_directories(RendererDemo PRIVATE Engine/Source)

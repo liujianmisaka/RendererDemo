@@ -13,9 +13,9 @@ AccessModifierOffset: -4
 # AllowAllArgumentsOnNextLine: true
 AllowAllConstructorInitializersOnNextLine: false
 # AllowAllParametersOfDeclarationOnNextLine: true
-# AllowShortBlocksOnASingleLine: Never
+AllowShortBlocksOnASingleLine: false
 AllowShortCaseLabelsOnASingleLine: true
-# AllowShortFunctionsOnASingleLine: All
+AllowShortFunctionsOnASingleLine: false
 # AllowShortLambdasOnASingleLine: All
 # AllowShortIfStatementsOnASingleLine: WithoutElse
 # AllowShortLoopsOnASingleLine: true
@@ -51,7 +51,7 @@ BreakBeforeBraces: Attach
 # BreakConstructorInitializers: BeforeColon
 # BreakAfterJavaFieldAnnotations: false
 # BreakStringLiterals: true
-ColumnLimit: 160
+ColumnLimit: 120
 CommentPragmas: "^ NOLINT:"
 # CompactNamespaces: false
 # ConstructorInitializerAllOnOneLineOrOnePerLine: true
