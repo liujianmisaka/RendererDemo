@@ -1,0 +1,39 @@
+{
+	"name": "renderer-demo",
+	"version-semver": "0.1.0",
+	"description": "Simple game engine.",
+	"dependencies": [
+		{
+			"name": "glfw3",
+			"platform": "(windows & x64) | (windows & x86)"
+		},
+		{
+			"name": "glm",
+			"platform": "(windows & x64) | (windows & x86)"
+		},
+		{
+			"name": "spdlog",
+			"platform": "(windows & x64) | (windows & x86)"
+		},
+		{
+			"name": "glad",
+			"platform": "(windows & x64) | (windows & x86)"
+		},
+		{
+			"name": "imgui",
+			"platform": "(windows & x64) | (windows & x86)"
+		},
+		{
+			"name": "entt",
+			"platform": "(windows & x64) | (windows & x86)"
+		},
+		{
+			"name": "vcpkg-cmake",
+			"host": true
+		},
+		{
+			"name": "vcpkg-cmake-config",
+			"host": true
+		}
+	]
+}
