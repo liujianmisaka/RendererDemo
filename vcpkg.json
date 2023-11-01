@@ -28,6 +28,10 @@
 			"platform": "(windows & x64) | (windows & x86)"
 		},
 		{
+			"name": "vulkan-headers",
+			"platform": "(windows & x64) | (windows & x86)"
+		},
+		{
 			"name": "vcpkg-cmake",
 			"host": true
 		},

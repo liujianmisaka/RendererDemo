@@ -4,9 +4,10 @@ namespace RendererDemo {
 
 class Componnet {
 public:
+    Componnet() = default;
     virtual ~Componnet() = default;
 
-    virtual void Tick(float ts) = 0;
+    virtual void Tick(float ts){};
 };
 
 } // namespace RendererDemo

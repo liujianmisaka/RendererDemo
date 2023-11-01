@@ -1,4 +1,5 @@
 #include "Runtime/Function/Renderer/System/WindowSystem.hpp"
+#include <iostream>
 #include <stdexcept>
 #include <utility>
 
@@ -13,11 +14,6 @@ void WindowSystem::Initialize(int width, int height, const std::string& title) {
         std::cerr << "Failed to initialize GLFW" << std::endl;
         throw std::runtime_error("Failed to Init glfw!");
     }
-
-    // glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    // glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    // glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    // glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 
     m_GLFWWindow = glfwCreateWindow(1280, 960, "Renderer Demo", nullptr, nullptr);
 
