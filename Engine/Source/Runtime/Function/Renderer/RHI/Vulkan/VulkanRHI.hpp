@@ -13,12 +13,13 @@ public:
 
     virtual void Initialize(RHIInitInfo rhi_init_info) override{};
 
-    virtual void CreateBuffer(BufferInfo buffer_info) override{};
-    virtual void CreateVertexLayout(RawVertexLayout raw_vertex_buffer_layout) override{};
+    virtual void CreateBuffer(BufferCreateInfo create_info) override{};
+    virtual void CreateVertexLayout(VertexLayoutCreateInfo create_info) override{};
     virtual void CreateVertexArray() override{};
 
-    virtual void CreateShader(ShaderInfo shader_info) override{};
+    virtual void CreateShader(ShaderCreateInfoInfo create_info) override{};
     virtual void CreateProgram() override{};
+    virtual void CreateIndexDrawBuffer() override{};
 
     virtual void Tick() override{};
 

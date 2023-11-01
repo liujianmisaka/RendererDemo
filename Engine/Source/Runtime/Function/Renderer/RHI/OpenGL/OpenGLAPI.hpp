@@ -2,6 +2,7 @@
 #include <GLFW/glfw3.h>
 #include <vector>
 
+#include "Runtime/Core/Base/Types.hpp"
 #include "Runtime/Function/Renderer/RHI/Interface/Buffer.hpp"
 #include "Runtime/Function/Renderer/RHI/Interface/Layout.hpp"
 #include "Runtime/Function/Renderer/RHI/Interface/Shader.hpp"
@@ -11,13 +12,20 @@ namespace RendererDemo {
 
 class OpenGLAPI {
 public:
-    static OpenGLBuffer CreateBuffer(BufferInfo buffer_info);
+    static OpenGLBuffer CreateBuffer(BufferCreateInfo create_info);
 
-    static OpenGLVertexBufferLayout CreateVertexLayout(RawVertexLayout raw_vertex_layout);
+    static OpenGLVertexBufferLayout CreateVertexLayout(VertexLayoutCreateInfo create_info);
 
-	static OpenGLShader CreateShader(RawShader raw_shader);
+	static OpenGLVertexArray CreateVertexArray(OpenGLVertexArrayCreateInfo create_info);
 
-	static OpenGLProgram CreateProgram(std::vector<OpenGLShader> shader_vector);
+    static OpenGLShader CreateShader(ShaderCreateInfoInfo create_info);
+
+    static OpenGLProgram CreateProgram(std::vector<OpenGLShader> shader_vector);
+
+    static OpenGLIndexDrawBuffer CreateIndexDrawBuffer(OpenGLIndexDrawBufferCreateInfo create_info);
+
+private:
+    static uint32_t GetUnitSizeFromDataType(MisakaDataType data_type);
 };
 
 } // namespace RendererDemo

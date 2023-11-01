@@ -20,12 +20,13 @@ public:
 
     virtual void Initialize(RHIInitInfo rhi_init_info) = 0;
 
-    virtual void CreateBuffer(BufferInfo buffer_info) = 0;
+    virtual void CreateBuffer(BufferCreateInfo create_info) = 0;
     // virtual void CreateBuffer(BufferType buffer_type, uint32_t buffer_size, void* buffer_data) = 0;
-    virtual void CreateVertexLayout(RawVertexLayout raw_vertex_buffer_layout) = 0;
+    virtual void CreateVertexLayout(VertexLayoutCreateInfo create_info) = 0;
 	virtual void CreateVertexArray() = 0;
-    virtual void CreateShader(ShaderInfo shader_info) = 0;
+    virtual void CreateShader(ShaderCreateInfoInfo create_info) = 0;
     virtual void CreateProgram() = 0;
+	virtual void CreateIndexDrawBuffer() = 0;
 
 	virtual void DrawExample() {}
 
