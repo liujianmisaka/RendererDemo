@@ -17,6 +17,7 @@ find_package(glad CONFIG REQUIRED)
 find_package(imgui CONFIG REQUIRED)
 find_package(EnTT CONFIG REQUIRED)
 find_package(VulkanHeaders CONFIG)
+find_package(assimp CONFIG REQUIRED)
 
 file(
 GLOB_RECURSE RendererDemo_SRC 
@@ -34,6 +35,7 @@ PRIVATE
     imgui::imgui
 	EnTT::EnTT
 	Vulkan::Headers
+	assimp::assimp
 )
 
 target_include_directories(RendererDemo PRIVATE Engine/Source)

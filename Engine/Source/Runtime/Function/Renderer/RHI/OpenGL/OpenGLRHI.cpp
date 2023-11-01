@@ -1,4 +1,5 @@
 #include "Runtime/Function/Renderer/RHI/OpenGL/OpenGLRHI.hpp"
+#include <cassert>
 #include <iostream>
 #include "Runtime/Function/Renderer/RHI/Interface/Shader.hpp"
 #include "Runtime/Function/Renderer/RHI/OpenGL/OpenGL_Resource.hpp"
@@ -18,25 +19,22 @@ void OpenGLRHI::Initialize(RHIInitInfo rhi_init_info) {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-	glDisable(GL_CULL_FACE);
+    glDisable(GL_CULL_FACE);
 }
 
-void OpenGLRHI::CreateBuffer(BufferInfo buffer_info) {
-    OpenGLBuffer buffer = OpenGLAPI::CreateBuffer(buffer_info);
-    switch (buffer_info.buffer_type) {
+void OpenGLRHI::CreateBuffer(BufferCreateInfo create_info) {
+    OpenGLBuffer buffer = OpenGLAPI::CreateBuffer(create_info);
+    switch (create_info.m_buffer_type) {
         case BufferType::VertexBuffer: {
             m_vertex_buffer = buffer;
-            glBindBuffer(GL_ARRAY_BUFFER, m_vertex_buffer.buffer_id);
             break;
         }
         case BufferType::IndexBuffer: {
             m_index_buffer = buffer;
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_index_buffer.buffer_id);
             break;
         }
         case BufferType::UniformBuffer: {
             m_uniform_buffer = buffer;
-            glBindBuffer(GL_UNIFORM_BUFFER, m_uniform_buffer.buffer_id);
             break;
         }
         default: {
@@ -46,25 +44,20 @@ void OpenGLRHI::CreateBuffer(BufferInfo buffer_info) {
     }
 }
 
-void OpenGLRHI::CreateVertexLayout(RawVertexLayout raw_vertex_buffer_layout) {
-    m_vertex_buffer_layout = OpenGLAPI::CreateVertexLayout(raw_vertex_buffer_layout);
+void OpenGLRHI::CreateVertexLayout(VertexLayoutCreateInfo create_info) {
+    m_vertex_buffer_layout = OpenGLAPI::CreateVertexLayout(create_info);
 }
 
 void OpenGLRHI::CreateVertexArray() {
-    glGenVertexArrays(1, &m_vertex_array);
-	glBindVertexArray(m_vertex_array);
-    glBindBuffer(GL_ARRAY_BUFFER, m_vertex_buffer.buffer_id);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_index_buffer.buffer_id);
-    for (auto& element_info : m_vertex_buffer_layout.element_info_vector) {
-        glEnableVertexAttribArray(element_info.index);
-        glVertexAttribPointer(element_info.index, element_info.size, element_info.type, element_info.normalized,
-                              element_info.stride, (void*)element_info.offset);
-    }
+    OpenGLVertexArrayCreateInfo create_info;
+    create_info.vertex_buffer = m_vertex_buffer;
+    create_info.index_buffer = m_index_buffer;
+    create_info.vertex_buffer_layout = m_vertex_buffer_layout;
+    m_vertex_array = OpenGLAPI::CreateVertexArray(create_info);
 }
 
-void OpenGLRHI::CreateShader(ShaderInfo shader_info) {
-    RawShader raw_shader{shader_info};
-    OpenGLShader shader = OpenGLAPI::CreateShader(raw_shader);
+void OpenGLRHI::CreateShader(ShaderCreateInfoInfo create_info) {
+    OpenGLShader shader = OpenGLAPI::CreateShader(create_info);
     m_shaders.emplace_back(shader);
 }
 
@@ -73,16 +66,31 @@ void OpenGLRHI::CreateProgram() {
     glUseProgram(m_program.program_id);
 }
 
+void OpenGLRHI::CreateIndexDrawBuffer() {
+    OpenGLIndexDrawBufferCreateInfo create_info;
+    create_info.index_buffer = m_index_buffer;
+    create_info.vertex_array = m_vertex_array;
+    create_info.draw_mode = GL_TRIANGLES; // TODO: support other draw mode
+    create_info.program = m_program;
+    m_draw_buffers.emplace_back(OpenGLAPI::CreateIndexDrawBuffer(create_info));
+    m_draw_buffer_index++;
+}
+
 void OpenGLRHI::Tick() {
     // 清空颜色缓冲
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
-    glUseProgram(m_program.program_id);
-    glBindVertexArray(m_vertex_array);
+    // TODO: Add default draw buffer when no draw buffer is created
+    assert(m_draw_buffers.size() > 0);
 
-    // 绘制三角形
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+    for (int i = 0; i < m_draw_buffers.size(); i++) {
+        OpenGLIndexDrawBuffer draw_buffer = m_draw_buffers[i];
+        glBindVertexArray(draw_buffer.vertex_array_id);
+        glUseProgram(draw_buffer.program_id);
+        glDrawElements(draw_buffer.draw_mode, draw_buffer.index_count, draw_buffer.index_type,
+                       (void*)draw_buffer.index_offset);
+    }
 }
 
 void OpenGLRHI::DrawExample() {
@@ -155,7 +163,7 @@ void main()
 
     glBindVertexArray(VAO);
 
-    m_vertex_array = VAO;
+    m_vertex_array.vertex_array_id = VAO;
 
     // glBindBuffer(GL_ARRAY_BUFFER, VBO);
     // glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
