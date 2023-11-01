@@ -1,6 +1,12 @@
 # dev log
 
-[ 2023-10-10 ] 使用 GLFW 显示一个窗口
+[ 2023-10-29 ] Add basic abstract RHI and OpenGL RHI.
+
+[ 2023-10-29 ] Add a simple GLFW event delegater.
+
+[ 2023-10-25 ] New engine framework.
+
+[ 2023-10-10 ] 使用 GLFW 显示一个窗口.
 
 # 命名规范
 
