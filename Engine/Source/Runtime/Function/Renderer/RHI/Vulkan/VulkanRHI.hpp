@@ -13,17 +13,12 @@ public:
 
     virtual void Initialize(RHIInitInfo rhi_init_info) override{};
 
-    virtual void CreateBuffer(BufferInfo buffer_info) override{};
-    virtual void CreateVertexLayout(RawVertexLayout raw_vertex_buffer_layout) override{};
-    virtual void CreateVertexArray() override{};
-
-    virtual void CreateShader(ShaderInfo shader_info) override{};
-    virtual void CreateProgram() override{};
+    virtual void CreateIndexDrawBuffer() override{};
 
     virtual void Tick() override{};
 
 private:
-    GLFWwindow* window;
+    // GLFWwindow* window;
 
     VkInstance instance;
     VkDebugUtilsMessengerEXT debugMessenger;
@@ -65,7 +60,7 @@ private:
 
     std::vector<VkBuffer> uniformBuffers;
     std::vector<VkDeviceMemory> uniformBuffersMemory;
-    std::vector<void*> uniformBuffersMapped;
+    std::vector<void *> uniformBuffersMapped;
 
     VkDescriptorPool descriptorPool;
     std::vector<VkDescriptorSet> descriptorSets;

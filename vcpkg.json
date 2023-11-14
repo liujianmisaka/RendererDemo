@@ -21,7 +21,12 @@
 		},
 		{
 			"name": "imgui",
-			"platform": "(windows & x64) | (windows & x86)"
+			"platform": "(windows & x64) | (windows & x86)",
+			"features": [
+				"docking-experimental",
+				"opengl3-binding",
+				"glfw-binding"
+			]
 		},
 		{
 			"name": "entt",
@@ -29,6 +34,10 @@
 		},
 		{
 			"name": "vulkan-headers",
+			"platform": "(windows & x64) | (windows & x86)"
+		},
+		{
+			"name": "assimp",
 			"platform": "(windows & x64) | (windows & x86)"
 		},
 		{

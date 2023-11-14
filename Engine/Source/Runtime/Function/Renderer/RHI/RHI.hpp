@@ -1,16 +1,20 @@
 #pragma once
 
+#include <cstdint>
 #include <memory>
 
-#include "Runtime/Function/Renderer/RHI/Interface/Buffer.hpp"
-#include "Runtime/Function/Renderer/RHI/Interface/Layout.hpp"
-#include "Runtime/Function/Renderer/RHI/Interface/Shader.hpp"
+#include "Runtime/Function/Renderer/RHI/RHI_Types.hpp"
+#include "Runtime/Function/Renderer/RHI/RHI_Struct.hpp"
+#include "Runtime/Function/Window/WindowSystem.hpp"
+#include "Runtime/Resource/Manager/AssetManager.hpp"
 
 namespace RendererDemo {
 
-class WindowSystem;
+class GameWorldManager;
 
 struct RHIInitInfo {
+    std::shared_ptr<GameWorldManager> game_world_manager;
+    std::shared_ptr<AssetManager> asset_manager;
     std::shared_ptr<WindowSystem> window_system;
 };
 
@@ -19,17 +23,22 @@ public:
     virtual ~RHI() = default;
 
     virtual void Initialize(RHIInitInfo rhi_init_info) = 0;
+    virtual void Clear(){};
+    virtual void CreateBuffer(RHIBufferCreateInfo create_info){};
+    virtual void CreateVertexLayout(std::vector<RHIElementType> info){};
+    virtual void CreateIndexDrawBuffer(){};
 
-    virtual void CreateBuffer(BufferInfo buffer_info) = 0;
-    // virtual void CreateBuffer(BufferType buffer_type, uint32_t buffer_size, void* buffer_data) = 0;
-    virtual void CreateVertexLayout(RawVertexLayout raw_vertex_buffer_layout) = 0;
-	virtual void CreateVertexArray() = 0;
-    virtual void CreateShader(ShaderInfo shader_info) = 0;
-    virtual void CreateProgram() = 0;
-
-	virtual void DrawExample() {}
+    virtual void GetTextureOfRenderResult(uint64_t& texture_id){};
 
     virtual void Tick() = 0;
+
+    /* -------------------------------------------------------------------------- */
+    /*                                   Old API                                  */
+    /* -------------------------------------------------------------------------- */
+
+    virtual void DrawExample(){};
+
+    // TODO: Add clear functions
 };
 
 } // namespace RendererDemo

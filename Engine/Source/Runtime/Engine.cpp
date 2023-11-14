@@ -5,8 +5,9 @@
 #include "Runtime/Function/RuntimeContext/RuntimeContext.hpp"
 // #include "Runtime/Core/Log/LogSystem.hpp"
 #include "Runtime/Function/Framework/Manager/GameWorldManager.hpp"
-#include "Runtime/Function/Renderer/System/RenderSystem.hpp"
-#include "Runtime/Function/Renderer/System/WindowSystem.hpp"
+#include "Runtime/Function/Renderer/RenderSystem.hpp"
+#include "Runtime/Function/Window/WindowSystem.hpp"
+#include "Runtime/Function/Event/EventSystem.hpp"
 
 namespace RendererDemo {
 
@@ -22,15 +23,16 @@ void MisakaEngine::ShutdownEngine() {
     // LOG_INFO("Misaka Engine Shutdown!");
 }
 
-void MisakaEngine::Run() {
-    while (!g_runtime_context.m_window_system->ShouldClose()) {
-        float timestep = 0;
-        g_runtime_context.m_game_world_manager->Tick(timestep);
-        g_runtime_context.m_renderer_system->Tick(timestep);
+bool MisakaEngine::Run() {
+    float timestep = 0;
+    g_runtime_context.m_event_system->Tick();
+    g_runtime_context.m_game_world_manager->Tick(timestep);
 
-		g_runtime_context.m_window_system->SwapBuffers();
-		g_runtime_context.m_window_system->PollEvents();
-    }
+    // TODO: Swap render data before render
+    g_runtime_context.m_renderer_system->Tick(timestep);
+
+    bool is_running = !g_runtime_context.m_window_system->ShouldClose();
+    return is_running;
 }
 
 } // namespace RendererDemo

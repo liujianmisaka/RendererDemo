@@ -2,10 +2,10 @@
 
 namespace RendererDemo {
 
-class Componnet {
+class Component {
 public:
-    Componnet() = default;
-    virtual ~Componnet() = default;
+    Component() = default;
+    virtual ~Component() = default;
 
     virtual void Tick(float ts){};
 };

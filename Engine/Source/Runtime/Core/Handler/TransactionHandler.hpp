@@ -1,3 +1,5 @@
+#pragma once
+
 #include <functional>
 #include <GLFW/glfw3.h>
 #include "Runtime/Core/Handler/Delegate.hpp"
@@ -16,7 +18,7 @@ enum class TransactionType {
     // clang-format on
 };
 
-// 事务处理器类
+// NOTE: 事务处理器类, 不可用
 class TransactionHandler {
 public:
     // 添加事务处理函数
