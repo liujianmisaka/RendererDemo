@@ -1,4 +1,4 @@
-#include "Runtime/Function/Renderer/System/WindowSystem.hpp"
+#include "Runtime/Function/Window/WindowSystem.hpp"
 #include <iostream>
 #include <stdexcept>
 #include <utility>
@@ -15,7 +15,7 @@ void WindowSystem::Initialize(int width, int height, const std::string& title) {
         throw std::runtime_error("Failed to Init glfw!");
     }
 
-    m_GLFWWindow = glfwCreateWindow(1280, 960, "Renderer Demo", nullptr, nullptr);
+    m_GLFWWindow = glfwCreateWindow(m_width, m_height, "Renderer Demo", nullptr, nullptr);
 
     if (!m_GLFWWindow) {
         std::cerr << "Failed to create GLFW window" << std::endl;
@@ -24,7 +24,7 @@ void WindowSystem::Initialize(int width, int height, const std::string& title) {
     }
 
     glfwSetErrorCallback(errorCallback);
-    glfwSetWindowUserPointer(m_GLFWWindow, this); // 设置用户指针, 使用 glfwGetWindowUserPointer(GLFWwindow *window) 获取 this 指针
+    glfwSetWindowUserPointer(m_GLFWWindow, this); // 使用 glfwGetWindowUserPointer(GLFWwindow *window) 获取 this 指针
 
     // TODO: set input callbacks
     SetGLFWCallbacks();
@@ -37,15 +37,33 @@ void WindowSystem::Clear() {
     glfwTerminate();
 }
 
-bool WindowSystem::ShouldClose() const { return glfwWindowShouldClose(m_GLFWWindow); }
+bool WindowSystem::ShouldClose() const {
+    return glfwWindowShouldClose(m_GLFWWindow);
+}
 
-void WindowSystem::PollEvents() const { glfwPollEvents(); }
+void WindowSystem::PollEvents() const {
+    glfwPollEvents();
+}
 
-void WindowSystem::SwapBuffers() const { glfwSwapBuffers(m_GLFWWindow); }
+void WindowSystem::SwapBuffers() const {
+    glfwSwapBuffers(m_GLFWWindow);
+}
 
-GLFWwindow* WindowSystem::GetNativeWindow() const { return m_GLFWWindow; }
+GLFWwindow* WindowSystem::GetNativeWindow() const {
+    return m_GLFWWindow;
+}
 
-WindowDelegateData& WindowSystem::GetWindowDelegateData() { return m_window_delegate_data; }
+WindowDelegateData& WindowSystem::GetWindowDelegateData() {
+    return m_window_delegate_data;
+}
+
+int WindowSystem::GetWidth() const {
+    return m_width;
+}
+
+int WindowSystem::GetHeight() const {
+    return m_height;
+}
 
 void WindowSystem::SetGLFWCallbacks() {
     glfwSetWindowCloseCallback(m_GLFWWindow, WindowCloseCallback);

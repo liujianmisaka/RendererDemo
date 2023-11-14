@@ -1,6 +1,8 @@
 # dev log
 
-[ 2023-10-29 ] Add basic abstract RHI and OpenGL RHI.
+[ 2023-11-13 ] Merge current work and think about the next plan. 
+
+[ 2023-10-31 ] Add basic abstract RHI and OpenGL RHI.
 
 [ 2023-10-29 ] Add a simple GLFW event delegater.
 

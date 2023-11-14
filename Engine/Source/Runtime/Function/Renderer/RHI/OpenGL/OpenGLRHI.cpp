@@ -1,14 +1,23 @@
 #include "Runtime/Function/Renderer/RHI/OpenGL/OpenGLRHI.hpp"
 #include <cassert>
+#include <cstdint>
 #include <iostream>
-#include "Runtime/Function/Renderer/RHI/Interface/Shader.hpp"
-#include "Runtime/Function/Renderer/RHI/OpenGL/OpenGL_Resource.hpp"
-#include "Runtime/Function/Renderer/System/WindowSystem.hpp"
+#include <memory>
+#include <imgui.h>
+#include <imgui_impl_glfw.h>
+#include <imgui_impl_opengl3.h>
+
+#include "Runtime/Function/Framework/FrameworkHeader.hpp"
+#include "Runtime/Function/Renderer/RHI/RenderInfo/MeshInfo.hpp"
+#include "Runtime/Function/Renderer/RHI/OpenGL/OpenGLAPI.hpp"
+#include "Runtime/Resource/Manager/AssetManager.hpp"
 
 namespace RendererDemo {
 
 void OpenGLRHI::Initialize(RHIInitInfo rhi_init_info) {
-    m_window = rhi_init_info.window_system->GetNativeWindow();
+    m_game_world_manager = rhi_init_info.game_world_manager;
+    m_asset_manager = rhi_init_info.asset_manager;
+    m_window_system = rhi_init_info.window_system;
 
     // 初始化 glad
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
@@ -20,21 +29,41 @@ void OpenGLRHI::Initialize(RHIInitInfo rhi_init_info) {
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
     glDisable(GL_CULL_FACE);
+
+    // 创建一个帧缓冲对象（FBO）和一个纹理
+    glGenFramebuffers(1, &m_fbo);
+    glGenTextures(1, &m_texture);
+    glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
+    glBindTexture(GL_TEXTURE_2D, m_texture);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_window_system->GetWidth(), m_window_system->GetHeight(), 0, GL_RGBA,
+                 GL_UNSIGNED_BYTE, NULL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_texture, 0);
+
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-void OpenGLRHI::CreateBuffer(BufferCreateInfo create_info) {
-    OpenGLBuffer buffer = OpenGLAPI::CreateBuffer(create_info);
-    switch (create_info.m_buffer_type) {
-        case BufferType::VertexBuffer: {
-            m_vertex_buffer = buffer;
+void OpenGLRHI::Clear() {}
+
+void OpenGLRHI::CreateBuffer(RHIBufferCreateInfo create_info) {
+    uint32_t buffer_id = 0;
+    switch (create_info.buffer_type) {
+        case RHIBufferType::VertexBuffer: {
+            buffer_id = OpenGLAPI::CreateVertexBuffer(create_info.byte_size, create_info.data);
+            m_vertex_buffers[create_info.name] = buffer_id;
             break;
         }
-        case BufferType::IndexBuffer: {
-            m_index_buffer = buffer;
+        case RHIBufferType::IndexBuffer: {
+            buffer_id = OpenGLAPI::CreateIndexBuffer(create_info.byte_size, create_info.data);
+            m_index_buffers[create_info.name] = buffer_id;
             break;
         }
-        case BufferType::UniformBuffer: {
-            m_uniform_buffer = buffer;
+        case RHIBufferType::UniformBuffer: {
+            buffer_id = OpenGLAPI::CreateUniformBuffer(create_info.byte_size, create_info.data);
+            m_uniform_buffers[create_info.name] = buffer_id;
             break;
         }
         default: {
@@ -44,42 +73,65 @@ void OpenGLRHI::CreateBuffer(BufferCreateInfo create_info) {
     }
 }
 
-void OpenGLRHI::CreateVertexLayout(VertexLayoutCreateInfo create_info) {
-    m_vertex_buffer_layout = OpenGLAPI::CreateVertexLayout(create_info);
+std::vector<OpenGLIndexDrawBuffer> OpenGLRHI::RenderMesh(std::vector<MeshData> meshs_data) {
+    std::vector<OpenGLIndexDrawBuffer> draw_buffers;
+    uint32_t program_id = m_asset_manager->GetProgram("mesh");
+    for (MeshData mesh_data : meshs_data) {
+        const RawVertexBuffer& vertex_buffer = mesh_data.vertex_buffer;
+        const RawIndexBuffer& index_buffer = mesh_data.index_buffer;
+
+        uint32_t position_id = OpenGLAPI::CreateVertexBuffer(vertex_buffer.vertex_count * sizeof(float) * 3,
+                                                             vertex_buffer.positions.data());
+        uint32_t normal_id =
+            OpenGLAPI::CreateVertexBuffer(vertex_buffer.vertex_count * sizeof(float) * 3, vertex_buffer.normals.data());
+        uint32_t index_id = OpenGLAPI::CreateIndexBuffer(index_buffer.primitive_count * sizeof(unsigned int),
+                                                         index_buffer.indices.data());
+
+        uint32_t position_vertex_array_id =
+            OpenGLAPI::CreateVertexArray(position_id, index_id, KOpenGLMeshVertexLayout);
+        uint32_t normal_vertex_array_id = OpenGLAPI::CreateVertexArray(normal_id, index_id, KOpenGLMeshVertexLayout);
+
+        OpenGLIndexDrawBuffer position_draw_buffer;
+        position_draw_buffer.draw_mode = GL_TRIANGLES;
+        position_draw_buffer.index_count = index_buffer.primitive_count;
+        position_draw_buffer.index_type = GL_UNSIGNED_INT;
+        position_draw_buffer.index_offset = 0;
+        position_draw_buffer.vertex_array_id = position_vertex_array_id;
+        position_draw_buffer.program_id = program_id;
+
+        OpenGLIndexDrawBuffer normal_draw_buffer;
+        normal_draw_buffer.draw_mode = GL_TRIANGLES;
+        normal_draw_buffer.index_count = index_buffer.primitive_count;
+        normal_draw_buffer.index_type = GL_UNSIGNED_INT;
+        normal_draw_buffer.index_offset = 0;
+        normal_draw_buffer.vertex_array_id = normal_vertex_array_id;
+        normal_draw_buffer.program_id = program_id;
+
+        draw_buffers.emplace_back(position_draw_buffer);
+        draw_buffers.emplace_back(normal_draw_buffer);
+    }
+    return draw_buffers;
 }
 
-void OpenGLRHI::CreateVertexArray() {
-    OpenGLVertexArrayCreateInfo create_info;
-    create_info.vertex_buffer = m_vertex_buffer;
-    create_info.index_buffer = m_index_buffer;
-    create_info.vertex_buffer_layout = m_vertex_buffer_layout;
-    m_vertex_array = OpenGLAPI::CreateVertexArray(create_info);
-}
+void OpenGLRHI::RenderCamera() {}
 
-void OpenGLRHI::CreateShader(ShaderCreateInfoInfo create_info) {
-    OpenGLShader shader = OpenGLAPI::CreateShader(create_info);
-    m_shaders.emplace_back(shader);
-}
-
-void OpenGLRHI::CreateProgram() {
-    m_program = OpenGLAPI::CreateProgram(m_shaders);
-    glUseProgram(m_program.program_id);
-}
-
-void OpenGLRHI::CreateIndexDrawBuffer() {
-    OpenGLIndexDrawBufferCreateInfo create_info;
-    create_info.index_buffer = m_index_buffer;
-    create_info.vertex_array = m_vertex_array;
-    create_info.draw_mode = GL_TRIANGLES; // TODO: support other draw mode
-    create_info.program = m_program;
-    m_draw_buffers.emplace_back(OpenGLAPI::CreateIndexDrawBuffer(create_info));
-    m_draw_buffer_index++;
-}
+void OpenGLRHI::GetTextureOfRenderResult(uint64_t& texture_id) { texture_id = m_texture; }
 
 void OpenGLRHI::Tick() {
-    // 清空颜色缓冲
-    glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+    auto scene = m_game_world_manager->GetActivateScene();
+    for (auto& object : scene->GetObjects()) {
+        if (object.first == "basic_object") {
+            auto mesh_component = object.second->GetComponent<MeshComponent>();
+            if (mesh_component == nullptr || mesh_component->Flag()) continue;
+            const std::vector<MeshData>& meshs_data = mesh_component->GetMeshData();
+            m_draw_buffers = RenderMesh(meshs_data);
+            mesh_component->SetFlag(true);
+        }
+    }
+
     glClear(GL_COLOR_BUFFER_BIT);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
 
     // TODO: Add default draw buffer when no draw buffer is created
     assert(m_draw_buffers.size() > 0);
@@ -91,93 +143,7 @@ void OpenGLRHI::Tick() {
         glDrawElements(draw_buffer.draw_mode, draw_buffer.index_count, draw_buffer.index_type,
                        (void*)draw_buffer.index_offset);
     }
-}
-
-void OpenGLRHI::DrawExample() {
-    // // 顶点数据
-    // float vertices[] = {
-    //     -0.5f, -0.5f, 0.0f, // 左下角
-    //     0.5f,  -0.5f, 0.0f, // 右下角
-    //     0.0f,  0.5f,  0.0f, // 中上
-    //     0.0f,  -0.5f, 0.0f  // 中下
-    // };
-
-    // // 索引数据
-    // unsigned int indices[] = {
-    //     0, 1, 2, // 第一个三角形
-    //     1, 3, 2  // 第二个三角形
-    // };
-
-    // 顶点着色器源代码
-    const char* vertexShaderSource = R"(
-#version 330 core
-layout (location = 0) in vec3 aPos;
-
-void main()
-{
-    gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);
-}
-)";
-
-    // 片段着色器源代码
-    const char* fragmentShaderSource = R"(
-#version 330 core
-out vec4 FragColor;
-
-void main()
-{
-    FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);
-}
-)";
-
-    // 创建并编译顶点着色器
-    unsigned int vertexShader;
-    vertexShader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-    glCompileShader(vertexShader);
-
-    // 创建并编译片段着色器
-    unsigned int fragmentShader;
-    fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
-    glCompileShader(fragmentShader);
-
-    // 创建程序对象
-    unsigned int shaderProgram;
-    shaderProgram = glCreateProgram();
-    glAttachShader(shaderProgram, vertexShader);
-    glAttachShader(shaderProgram, fragmentShader);
-    glLinkProgram(shaderProgram);
-
-    m_program.program_id = shaderProgram;
-
-    // 删除着色器
-    glDeleteShader(vertexShader);
-    glDeleteShader(fragmentShader);
-
-    // 创建顶点数组对象、顶点缓冲对象和索引缓冲对象
-    unsigned int VAO, VBO, EBO;
-    glGenVertexArrays(1, &VAO);
-    // glGenBuffers(1, &VBO);
-    // glGenBuffers(1, &EBO);
-
-    glBindVertexArray(VAO);
-
-    m_vertex_array.vertex_array_id = VAO;
-
-    // glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    // glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-    glBindBuffer(GL_ARRAY_BUFFER, m_vertex_buffer.buffer_id);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_index_buffer.buffer_id);
-
-    // glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    // glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
-
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 } // namespace RendererDemo

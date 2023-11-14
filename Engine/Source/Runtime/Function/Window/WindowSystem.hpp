@@ -1,6 +1,6 @@
 #pragma once
+#include <glad/glad.h>
 #include <GLFW/glfw3.h>
-// #include <glad/glad.h>
 #include <iostream>
 #include <string>
 
@@ -29,7 +29,7 @@ public:
     WindowSystem() = default;
     ~WindowSystem() = default;
 
-    void Initialize(int width = 960, int height = 960, const std::string& title = "Misaka Engine");
+    void Initialize(int width = 1280, int height = 960, const std::string& title = "Misaka Engine");
     void Clear();
 
     bool ShouldClose() const;
@@ -37,14 +37,16 @@ public:
     void SwapBuffers() const;
     GLFWwindow* GetNativeWindow() const;
     WindowDelegateData& GetWindowDelegateData();
+    int GetWidth() const;
+    int GetHeight() const;
 
 private:
     void SetGLFWCallbacks();
 
 private:
     GLFWwindow* m_GLFWWindow;
-    int m_width = 0;
-    int m_height = 0;
+    int m_width = 1280;
+    int m_height = 960;
     std::string m_title = "Misaka Engine";
 
     WindowDelegateData m_window_delegate_data;
@@ -95,6 +97,9 @@ private:
 
     static void WindowResizeCallback(GLFWwindow* window, int width, int height) {
         WindowSystem* system = static_cast<WindowSystem*>(glfwGetWindowUserPointer(window));
+        system->m_width = width;
+        system->m_height = height;
+        glViewport(0, 0, width, height);
         system->m_window_delegate_data.m_window_resize_delegate.Broadcast(window, width, height);
     }
 
@@ -114,7 +119,6 @@ private:
     // }
 
     static void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
-        std::cout << "key pressed" << std::endl;
         WindowSystem* system = static_cast<WindowSystem*>(glfwGetWindowUserPointer(window));
         switch (action) {
             case GLFW_PRESS: {

@@ -1,2 +1,6 @@
+# directories
 .cache
 build
+
+# files
+imgui.ini

@@ -5,13 +5,17 @@
 namespace RendererDemo {
 
 class WindowSystem;
+class GameWorldManager;
 class RHI;
+class AssetManager;
 
 enum class GraphicsAPI { OpenGL, Vulkan };
 
 struct RendererSystemInitInfo {
     GraphicsAPI graphics_api = GraphicsAPI::OpenGL;
     std::shared_ptr<WindowSystem> window_system;
+    std::shared_ptr<GameWorldManager> game_world_manager;
+    std::shared_ptr<AssetManager> asset_manager;
 };
 
 class RendererSystem {

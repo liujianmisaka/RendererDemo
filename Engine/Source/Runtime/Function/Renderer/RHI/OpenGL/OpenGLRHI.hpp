@@ -2,45 +2,54 @@
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <cstdint>
+#include <memory>
+#include <string>
+#include <unordered_map>
 #include <vector>
 
-#include "Runtime/Function/Renderer/RHI/OpenGL/OpenGL_Resource.hpp"
+#include "Runtime/Function/Renderer/RHI/RHI_Struct.hpp"
 #include "Runtime/Function/Renderer/RHI/RHI.hpp"
-#include "Runtime/Function/Renderer/RHI/OpenGL/OpenGLAPI.hpp"
+#include "Runtime/Function/Renderer/RHI/OpenGL/OpenGL_Resource.hpp"
 
 namespace RendererDemo {
+
+class GameWorldManager;
+class AssetManager;
+class MeshData;
 
 class OpenGLRHI : public RHI {
 public:
     OpenGLRHI(){};
     virtual ~OpenGLRHI() = default;
-
+	virtual void Clear() override;
     virtual void Initialize(RHIInitInfo rhi_init_info) override;
+    virtual void CreateBuffer(RHIBufferCreateInfo create_info) override;
 
-    virtual void CreateBuffer(BufferCreateInfo create_info) override;
-    virtual void CreateVertexLayout(VertexLayoutCreateInfo create_info) override;
-    virtual void CreateVertexArray() override;
+    std::vector<OpenGLIndexDrawBuffer> RenderMesh(std::vector<MeshData> meshs_data);
+    void RenderCamera();
 
-    virtual void CreateShader(ShaderCreateInfoInfo create_info) override;
-    virtual void CreateProgram() override;
-	virtual void CreateIndexDrawBuffer() override;
+    virtual void GetTextureOfRenderResult(uint64_t& texture_id) override;
 
     virtual void Tick() override;
 
-    virtual void DrawExample() override;
-
 private:
-    GLFWwindow* m_window;
+private:
+    std::shared_ptr<GameWorldManager> m_game_world_manager;
+    std::shared_ptr<AssetManager> m_asset_manager;
+    std::shared_ptr<WindowSystem> m_window_system;
 
-    OpenGLBuffer m_vertex_buffer;
-    OpenGLBuffer m_index_buffer;
-    OpenGLBuffer m_uniform_buffer;
-    OpenGLVertexArray m_vertex_array;
-    OpenGLVertexBufferLayout m_vertex_buffer_layout;
-    std::vector<OpenGLShader> m_shaders;
-    OpenGLProgram m_program;
-	std::vector<OpenGLIndexDrawBuffer> m_draw_buffers;
-	int m_draw_buffer_index = 0;
+    GLuint m_fbo = 0;
+    GLuint m_texture = 0; // TODO: advance this
+
+    std::unordered_map<std::string, uint32_t> m_vertex_buffers;
+    std::unordered_map<std::string, uint32_t> m_index_buffers;
+    std::unordered_map<std::string, uint32_t> m_uniform_buffers;
+    std::unordered_map<std::string, RHIVertexLayout> m_vertex_layouts;
+    std::unordered_map<std::string, uint32_t> m_vertex_arrays;
+
+    std::vector<OpenGLIndexDrawBuffer> m_draw_buffers;
+    int m_draw_buffer_index = 0;
 };
 
 } // namespace RendererDemo

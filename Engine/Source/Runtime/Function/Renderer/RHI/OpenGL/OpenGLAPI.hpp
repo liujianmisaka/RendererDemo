@@ -1,31 +1,30 @@
+#pragma once
+
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <cstdint>
 #include <vector>
 
-#include "Runtime/Core/Base/Types.hpp"
-#include "Runtime/Function/Renderer/RHI/Interface/Buffer.hpp"
-#include "Runtime/Function/Renderer/RHI/Interface/Layout.hpp"
-#include "Runtime/Function/Renderer/RHI/Interface/Shader.hpp"
-#include "Runtime/Function/Renderer/RHI/OpenGL/OpenGL_Resource.hpp"
+#include "Runtime/Function/Renderer/RHI/RHI_Struct.hpp"
 
 namespace RendererDemo {
 
 class OpenGLAPI {
 public:
-    static OpenGLBuffer CreateBuffer(BufferCreateInfo create_info);
-
-    static OpenGLVertexBufferLayout CreateVertexLayout(VertexLayoutCreateInfo create_info);
-
-	static OpenGLVertexArray CreateVertexArray(OpenGLVertexArrayCreateInfo create_info);
-
-    static OpenGLShader CreateShader(ShaderCreateInfoInfo create_info);
-
-    static OpenGLProgram CreateProgram(std::vector<OpenGLShader> shader_vector);
-
-    static OpenGLIndexDrawBuffer CreateIndexDrawBuffer(OpenGLIndexDrawBufferCreateInfo create_info);
+    // Basic OpenGL API
+    static uint32_t CreateVertexBuffer(uint32_t buffer_size, const void* buffer_data);
+    static uint32_t CreateIndexBuffer(uint32_t buffer_size, const void* buffer_data);
+    static uint32_t CreateUniformBuffer(uint32_t buffer_size, const void* buffer_data);
+    static void UnloadUniformBuffer(uint32_t buffer_id);
+    static RHIVertexLayout CreateVertexLayout(std::vector<RHIElementType> info);
+    static uint32_t CreateVertexArray(uint32_t vertex_buffer_id, uint32_t index_buffer_id, RHIVertexLayout layout);
+    static uint32_t CreateVertexShader(const char* shader_source);
+    static uint32_t CreateFragmentShader(const char* shader_source);
+    static uint32_t CreateProgram(uint32_t vertex_shader_id, uint32_t fragment_shader_id);
+    // static uint32_t CreateTexture();
 
 private:
-    static uint32_t GetUnitSizeFromDataType(MisakaDataType data_type);
+    static GLenum GetOpenGLDataTypeFromRHIDataType(RHIDataType type);
 };
 
 } // namespace RendererDemo

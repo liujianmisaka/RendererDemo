@@ -23,6 +23,7 @@ file(
 GLOB_RECURSE RendererDemo_SRC 
 	Engine/Source/*
 )
+list(FILTER RendererDemo_SRC EXCLUDE REGEX "Engine/Source/Test/*")
 
 add_executable(RendererDemo ${RendererDemo_SRC})
 target_link_libraries(
@@ -39,6 +40,10 @@ PRIVATE
 )
 
 target_include_directories(RendererDemo PRIVATE Engine/Source)
+
+add_executable(ImGuiTest Engine/Source/Test/ImGuiTest.cpp)
+target_link_libraries(ImGuiTest PRIVATE glfw glad::glad imgui::imgui)
+add_test(NAME ImGuiTest COMMAND ImGuiTest)
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
