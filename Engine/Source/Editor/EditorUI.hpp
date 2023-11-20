@@ -11,19 +11,21 @@ public:
 
     void Initialize();
     void Clear();
-
-    void Update();
-
-    void BeginFrame();
-	void ImGuiDraw();
-    void EndFrame();
-
     void Tick();
 
-    void SetTexture(uint64_t texture_id);
-
 private:
+    void Update();
+    void BeginFrame();
+    void ImGuiRender();
+    void EndFrame();
+
+	void RenderMenuBar();
+	void RenderSettings();
+	void RenderViewport();
+	void RenderStatus();
+
     void SetDarkThemeColors();
+	void SetFont();
 
 private:
     uint64_t m_texture_id = 0;
