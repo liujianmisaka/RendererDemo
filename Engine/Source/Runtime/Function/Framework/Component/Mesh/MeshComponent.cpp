@@ -5,11 +5,7 @@
 
 namespace RendererDemo {
 
-void MeshComponent::LoadModel(std::string path) {
-    LoadMesh(path);
-}
-
-void MeshComponent::Tick(float ts){};
+void MeshComponent::LoadModel(std::string path) { LoadMesh(path); }
 
 void MeshComponent::LoadMesh(std::string path) {
     Assimp::Importer importer;
@@ -87,7 +83,7 @@ void MeshComponent::processMesh(aiMesh* mesh, const aiScene* scene) {
         index_buffers.primitive_count++;
     }
 
-    m_meshs_data.emplace_back(MeshData{vertex_buffes, index_buffers});
+    m_mesh_data.emplace_back(RendererDemo::MeshData{vertex_buffes, index_buffers});
 }
 
 } // namespace RendererDemo

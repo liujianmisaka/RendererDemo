@@ -17,31 +17,19 @@ class CameraComponent : public Component {
 public:
     CameraComponent() = default;
     CameraComponent(float fov, float aspectRatio, float nearClip, float farClip);
-    ~CameraComponent() = default;
+    virtual ~CameraComponent() = default;
 
-    glm::mat4 GetViewProjection() {
-        return m_projection_matrix * m_view_matrix;
-    }
+    glm::mat4 GetViewProjection() { return m_projection_matrix * m_view_matrix; }
 
-    glm::mat4 GetViewMatrix() {
-        return m_view_matrix;
-    }
+    glm::mat4 GetViewMatrix() { return m_view_matrix; }
 
-    glm::mat4 GetProjectionMatrix() {
-        return m_projection_matrix;
-    }
+    glm::mat4 GetProjectionMatrix() { return m_projection_matrix; }
 
-    glm::vec3 GetPosition() {
-        return m_position;
-    }
+    glm::vec3 GetPosition() { return m_position; }
 
-    glm::vec3 GetForward() {
-        return m_forward;
-    }
+    glm::vec3 GetForward() { return m_forward; }
 
-    glm::vec3 GetUp() {
-        return m_up;
-    }
+    glm::vec3 GetUp() { return m_up; }
 
     void SetPosition(const glm::vec3& position) {
         m_position = position;
@@ -58,15 +46,11 @@ public:
         UpdateViewMatrix();
     }
 
-    void SetCameraMod(CameraMod cameraMod) {
-        m_camera_mod = cameraMod;
-    }
+    void SetCameraMod(CameraMod cameraMod) { m_camera_mod = cameraMod; }
 
-    CameraMod GetCameraMod() {
-        return m_camera_mod;
-    }
+    CameraMod GetCameraMod() { return m_camera_mod; }
 
-    void Tick(float ts){};
+    void Tick(float ts);
 
 private:
     void UpdateViewMatrix();

@@ -7,6 +7,8 @@
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
 
+#include "Runtime/Function/Framework/Component/Component.hpp"
+#include "Runtime/Function/Framework/Component/Mesh/MeshComponent.hpp"
 #include "Runtime/Function/Framework/FrameworkHeader.hpp"
 #include "Runtime/Function/Renderer/RHI/RHIPredefined.hpp"
 #include "Runtime/Function/Renderer/RHI/OpenGL/OpenGLAPI.hpp"
@@ -118,14 +120,17 @@ void OpenGLRHI::RenderCamera() {}
 void OpenGLRHI::GetTextureOfRenderResult(uint64_t& texture_id) { texture_id = m_texture; }
 
 void OpenGLRHI::Tick() {
-    auto scene = m_game_world_manager->GetActivateScene();
-    for (auto& object : scene->GetObjects()) {
-        if (object.first == "basic_object") {
-            auto mesh_component = object.second->GetComponent<MeshComponent>();
-            if (mesh_component == nullptr || mesh_component->Flag()) continue;
-            const std::vector<MeshData>& meshs_data = mesh_component->GetMeshData();
+    auto scene = m_game_world_manager->GetCurrentActivateScene();
+    auto view = scene->GetAllObjectWith<IdComponent, TagComponent, MeshComponent>();
+    for (auto entity : view) {
+        auto& mesh_component = view.get<MeshComponent>(entity);
+        if (mesh_component.Refresh()) {
+            auto id = view.get<IdComponent>(entity);
+            auto tag = view.get<TagComponent>(entity);
+            std::cout << "Entity: " << id.GetId() << " " << tag.GetTag() << std::endl;
+            const std::vector<MeshData>& meshs_data = mesh_component.MeshData();
             m_draw_buffers = RenderMesh(meshs_data);
-            mesh_component->SetFlag(true);
+            mesh_component.Refresh(false);
         }
     }
 

@@ -3,7 +3,7 @@
 
 namespace RendererDemo {
 
-void GameWorldManager::Initialize() {}
+void GameWorldManager::Initialize() { m_current_active_scene = std::make_shared<Scene>(); }
 
 void GameWorldManager::Clear() {}
 

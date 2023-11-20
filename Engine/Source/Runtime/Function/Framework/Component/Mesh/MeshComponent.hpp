@@ -15,19 +15,12 @@ public:
     virtual ~MeshComponent() = default;
 
     void LoadModel(std::string path);
-    virtual void Tick(float ts) override;
 
-    const std::vector<MeshData>& GetMeshData() {
-        return m_meshs_data;
-    }
+    const std::vector<MeshData>& MeshData() { return m_mesh_data; }
 
-    void SetFlag(bool flag) {
-        this->flag = flag;
-    }
+    void Refresh(bool flag) { m_flag = flag; }
 
-    bool Flag() {
-        return flag;
-    }
+    bool Refresh() { return m_flag; }
 
 private:
     void LoadMesh(std::string path);
@@ -35,8 +28,8 @@ private:
     void processMesh(aiMesh* mesh, const aiScene* scene);
 
 private:
-    std::vector<MeshData> m_meshs_data{};
-    bool flag = false;
+    std::vector<RendererDemo::MeshData> m_mesh_data{};
+    bool m_flag = true;
 };
 
 } // namespace RendererDemo

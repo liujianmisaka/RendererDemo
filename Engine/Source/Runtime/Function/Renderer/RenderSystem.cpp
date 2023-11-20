@@ -18,9 +18,7 @@ void RendererSystem::Initialize(RendererSystemInitInfo render_system_init_info) 
 
 void RendererSystem::Clear(){};
 
-void RendererSystem::Tick(float ts) {
-    m_rhi->Tick();
-}
+void RendererSystem::Tick(float ts) { m_rhi->Tick(); }
 
 /* -------------------------------------------------------------------------- */
 /*                                private apis                                */
