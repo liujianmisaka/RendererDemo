@@ -33,6 +33,8 @@ void EditorUI::Initialize() {
 
     // TODO: use editor context to get texture id
     g_runtime_context.m_renderer_system->GetRHI()->GetTextureOfRenderResult(m_texture_id);
+
+    m_scene_hierarchy_panel.SetContext(g_runtime_context.m_game_world_manager->GetCurrentActivateScene());
 }
 
 void EditorUI::Clear() {
@@ -108,6 +110,7 @@ void EditorUI::ImGuiRender() {
     RenderSettings();
     RenderStatus();
     RenderViewport();
+    m_scene_hierarchy_panel.OnImGuiRender();
 
     ImGui::End();
 }

@@ -28,12 +28,12 @@ void EditorDraw::InitDraw() {
 
     Object object = scene->CreateObject();
     {
-        auto& mesh_component = scene->AddComponent<MeshComponent>(object);
+        auto& mesh_component = object.AddComponent<MeshComponent>();
         mesh_component.LoadModel("Asset/Model/stylized-popcorn-machine-lowpoly/source/SM_Popcorn Machine.fbx");
 
-        auto& transform_component = scene->AddComponent<TransformComponent>(object);
+        auto& transform_component = object.AddComponent<TransformComponent>();
 
-        auto& camera_component = scene->AddComponent<CameraComponent>(object);
+        auto& camera_component = object.AddComponent<CameraComponent>();
     }
 }
 

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include "Editor/UI/SceneHierarchyPanel.hpp"
 
 namespace RendererDemo {
 
@@ -31,6 +32,8 @@ private:
     uint64_t m_texture_id = 0;
     int m_width = 0;
     int m_height = 0;
+
+    SceneHierarchyPanel m_scene_hierarchy_panel;
 };
 
 } // namespace RendererDemo

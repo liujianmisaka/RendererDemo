@@ -43,4 +43,17 @@ private:
     std::string m_Tag;
 };
 
+class SquaComponent : public Component {
+public:
+    SquaComponent() = default;
+    virtual ~SquaComponent() = default;
+    SquaComponent(const SquaComponent &) = default;
+    SquaComponent(float squa) : m_Squa(squa) {}
+
+    float GetSqua() { return m_Squa; }
+
+private:
+    float m_Squa;
+};
+
 } // namespace RendererDemo
