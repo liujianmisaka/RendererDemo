@@ -18,10 +18,6 @@ public:
 
     const std::vector<MeshData>& MeshData() { return m_mesh_data; }
 
-    void Refresh(bool flag) { m_flag = flag; }
-
-    bool Refresh() { return m_flag; }
-
 private:
     void LoadMesh(std::string path);
     void processNode(aiNode* node, const aiScene* scene);
@@ -29,7 +25,6 @@ private:
 
 private:
     std::vector<RendererDemo::MeshData> m_mesh_data{};
-    bool m_flag = true;
 };
 
 } // namespace RendererDemo
