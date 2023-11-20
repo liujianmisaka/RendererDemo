@@ -2,7 +2,7 @@
 #include <iostream>
 
 // #include "Runtime/Core/Base/macro.hpp"
-#include "Runtime/Function/RuntimeContext/RuntimeContext.hpp"
+#include "Runtime/RuntimeContext.hpp"
 // #include "Runtime/Core/Log/LogSystem.hpp"
 #include "Runtime/Function/Framework/Manager/GameWorldManager.hpp"
 #include "Runtime/Function/Renderer/RenderSystem.hpp"

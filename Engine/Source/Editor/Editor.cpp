@@ -1,7 +1,7 @@
 #include "Editor/Editor.hpp"
 #include <memory>
 #include "Runtime/Engine.hpp"
-#include "Runtime/Function/RuntimeContext/RuntimeContext.hpp"
+#include "Runtime/RuntimeContext.hpp"
 #include "Runtime/Function/Renderer/RenderSystem.hpp"
 #include "Runtime/Function/Window/WindowSystem.hpp"
 

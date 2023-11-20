@@ -1,13 +1,14 @@
-#include "Editor/EditorUI.hpp"
+#include "Editor/UI/EditorUI.hpp"
 
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
 #include <glm/glm.hpp>
-#include "Runtime/Function/RuntimeContext/RuntimeContext.hpp"
+#include "Runtime/RuntimeContext.hpp"
 #include "Runtime/Function/Renderer/RenderSystem.hpp"
 #include "Runtime/Function/Window/WindowSystem.hpp"
 #include "Runtime/Function/Renderer/RHI/RHI.hpp"
+#include "Runtime/Function/Framework/Manager/GameWorldManager.hpp"
 
 namespace RendererDemo {
 
@@ -30,6 +31,7 @@ void EditorUI::Initialize() {
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init("#version 410");
 
+    // TODO: use editor context to get texture id
     g_runtime_context.m_renderer_system->GetRHI()->GetTextureOfRenderResult(m_texture_id);
 }
 
@@ -102,7 +104,7 @@ void EditorUI::ImGuiRender() {
         ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
     }
 
-	RenderMenuBar();
+    RenderMenuBar();
     RenderSettings();
     RenderStatus();
     RenderViewport();
@@ -143,7 +145,8 @@ void EditorUI::RenderSettings() {
 
 void EditorUI::RenderViewport() {
     ImGui::Begin("Viewport", nullptr, ImGuiWindowFlags_NoTitleBar);
-    ImGui::Image((void*)(intptr_t)m_texture_id, ImVec2(m_width, m_height), ImVec2(0, 1), ImVec2(1, 0));
+	ImVec2 availableSize = ImGui::GetContentRegionAvail();
+    ImGui::Image((void*)(intptr_t)m_texture_id, availableSize, ImVec2(0, 1), ImVec2(1, 0));
     ImGui::End();
 }
 

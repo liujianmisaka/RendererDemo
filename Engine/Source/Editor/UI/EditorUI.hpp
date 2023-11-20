@@ -19,13 +19,13 @@ private:
     void ImGuiRender();
     void EndFrame();
 
-	void RenderMenuBar();
-	void RenderSettings();
-	void RenderViewport();
-	void RenderStatus();
+    void RenderMenuBar();
+    void RenderSettings();
+    void RenderViewport();
+    void RenderStatus();
 
     void SetDarkThemeColors();
-	void SetFont();
+    void SetFont();
 
 private:
     uint64_t m_texture_id = 0;

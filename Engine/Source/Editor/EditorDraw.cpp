@@ -5,7 +5,7 @@
 #include "Runtime/Function/Framework/Component/Mesh/MeshComponent.hpp"
 #include "Runtime/Function/Framework/Component/Transform/TransformComponent.hpp"
 #include "Runtime/Function/Renderer/RHI/RHI.hpp"
-#include "Runtime/Function/RuntimeContext/RuntimeContext.hpp"
+#include "Runtime/RuntimeContext.hpp"
 #include "Runtime/Function/Renderer/RenderSystem.hpp"
 #include "Runtime/Function/Framework/FrameworkHeader.hpp"
 

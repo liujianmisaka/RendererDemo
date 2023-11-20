@@ -4,7 +4,7 @@
 #include <glm/glm.hpp>
 #include "Editor/EditorDraw.hpp"
 #include "Editor/EditorEvent.hpp"
-#include "Editor/EditorUI.hpp"
+#include "Editor/UI/EditorUI.hpp"
 
 namespace RendererDemo {
 
