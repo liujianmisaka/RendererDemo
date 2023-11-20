@@ -8,6 +8,7 @@
 #include <unordered_map>
 #include <vector>
 
+#include "Runtime/Function/Framework/Scene/Scene.hpp"
 #include "Runtime/Function/Renderer/RHI/RHI.hpp"
 
 namespace RendererDemo {
@@ -24,8 +25,11 @@ public:
     virtual void Initialize(RHIInitInfo rhi_init_info) override;
     virtual void CreateBuffer(RHIBufferCreateInfo create_info) override;
 
+    // Renderer Component level
     std::vector<RHIIndexDrawBuffer> RenderMesh(std::vector<MeshData> meshs_data);
-    void RenderCamera();
+
+    // Renderer Object level
+    void RenderSceneCamera(Scene& scene);
 
     virtual void GetTextureOfRenderResult(uint64_t& texture_id) override;
 

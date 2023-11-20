@@ -4,6 +4,7 @@
 #include <iostream>
 #include <memory>
 #include <imgui.h>
+#include <glm/gtc/type_ptr.hpp>
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
 
@@ -115,7 +116,18 @@ std::vector<RHIIndexDrawBuffer> OpenGLRHI::RenderMesh(std::vector<MeshData> mesh
     return draw_buffers;
 }
 
-void OpenGLRHI::RenderCamera() {}
+void OpenGLRHI::RenderSceneCamera(Scene& scene) {
+    const glm::mat4& view = scene.GetViewMatrix();
+    const glm::mat4& projection = scene.GetProjectionMatrix();
+    const glm::mat4& model = scene.GetModelMatrix();
+
+    // 上传 MVP矩阵到GPU
+    uint32_t program_id = m_asset_manager->GetProgram("mesh");
+    glUseProgram(program_id);
+    glUniformMatrix4fv(glGetUniformLocation(program_id, "u_View"), 1, GL_FALSE, glm::value_ptr(view));
+    glUniformMatrix4fv(glGetUniformLocation(program_id, "u_Projection"), 1, GL_FALSE, glm::value_ptr(projection));
+    glUniformMatrix4fv(glGetUniformLocation(program_id, "u_Model"), 1, GL_FALSE, glm::value_ptr(model));
+}
 
 void OpenGLRHI::GetTextureOfRenderResult(uint64_t& texture_id) { texture_id = m_texture; }
 
@@ -133,6 +145,8 @@ void OpenGLRHI::Tick() {
             mesh_component.Refresh(false);
         }
     }
+
+    RenderSceneCamera(*scene);
 
     glClear(GL_COLOR_BUFFER_BIT);
 

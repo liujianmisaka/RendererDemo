@@ -9,7 +9,16 @@
 
 namespace RendererDemo {
 
-class RHIBuffer {};
+class RHIBuffer {
+public:
+    RHIBuffer() = default;
+    virtual ~RHIBuffer() = default;
+};
+class RHIShader {
+public:
+    RHIShader() = default;
+    virtual ~RHIShader() = default;
+};
 
 /* -------------------------------------------------------------------------- */
 /*                                   Old API                                  */
