@@ -8,9 +8,7 @@
 #include <unordered_map>
 #include <vector>
 
-#include "Runtime/Function/Renderer/RHI/RHI_Struct.hpp"
 #include "Runtime/Function/Renderer/RHI/RHI.hpp"
-#include "Runtime/Function/Renderer/RHI/OpenGL/OpenGL_Resource.hpp"
 
 namespace RendererDemo {
 
@@ -22,18 +20,17 @@ class OpenGLRHI : public RHI {
 public:
     OpenGLRHI(){};
     virtual ~OpenGLRHI() = default;
-	virtual void Clear() override;
+    virtual void Clear() override;
     virtual void Initialize(RHIInitInfo rhi_init_info) override;
     virtual void CreateBuffer(RHIBufferCreateInfo create_info) override;
 
-    std::vector<OpenGLIndexDrawBuffer> RenderMesh(std::vector<MeshData> meshs_data);
+    std::vector<RHIIndexDrawBuffer> RenderMesh(std::vector<MeshData> meshs_data);
     void RenderCamera();
 
     virtual void GetTextureOfRenderResult(uint64_t& texture_id) override;
 
     virtual void Tick() override;
 
-private:
 private:
     std::shared_ptr<GameWorldManager> m_game_world_manager;
     std::shared_ptr<AssetManager> m_asset_manager;
@@ -48,7 +45,7 @@ private:
     std::unordered_map<std::string, RHIVertexLayout> m_vertex_layouts;
     std::unordered_map<std::string, uint32_t> m_vertex_arrays;
 
-    std::vector<OpenGLIndexDrawBuffer> m_draw_buffers;
+    std::vector<RHIIndexDrawBuffer> m_draw_buffers;
     int m_draw_buffer_index = 0;
 };
 

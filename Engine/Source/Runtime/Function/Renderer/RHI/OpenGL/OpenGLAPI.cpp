@@ -2,9 +2,9 @@
 #include <cstdint>
 #include <iostream>
 
-#include "Runtime/Function/Renderer/RHI/RHI_PreData.hpp"
-#include "Runtime/Function/Renderer/RHI/RHI_Struct.hpp"
-#include "Runtime/Function/Renderer/RHI/RHI_Types.hpp"
+#include "Runtime/Function/Renderer/RHI/RHIPredefined.hpp"
+#include "Runtime/Function/Renderer/RHI/RHIStruct.hpp"
+#include "Runtime/Function/Renderer/RHI/RHITypes.hpp"
 
 namespace RendererDemo {
 

@@ -4,7 +4,6 @@
 
 #include "Runtime/Function/Renderer/RHI/RHI.hpp"
 #include "Runtime/Function/Renderer/RHI/OpenGL/OpenGLRHI.hpp"
-#include "Runtime/Function/Renderer/RHI/Vulkan/VulkanRHI.hpp"
 
 namespace RendererDemo {
 
@@ -30,8 +29,6 @@ void RendererSystem::Tick(float ts) {
 std::shared_ptr<RHI> RendererSystem::CreateGrapicsAPIInstance(GraphicsAPI api) {
     if (api == GraphicsAPI::OpenGL) {
         return std::make_shared<OpenGLRHI>();
-    } else if (api == GraphicsAPI::Vulkan) {
-        return std::make_shared<VulkanRHI>();
     } else {
         throw std::runtime_error("No such graphics api.");
     }

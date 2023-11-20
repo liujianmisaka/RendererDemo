@@ -8,7 +8,7 @@
 #include <imgui_impl_opengl3.h>
 
 #include "Runtime/Function/Framework/FrameworkHeader.hpp"
-#include "Runtime/Function/Renderer/RHI/RenderInfo/MeshInfo.hpp"
+#include "Runtime/Function/Renderer/RHI/RHIPredefined.hpp"
 #include "Runtime/Function/Renderer/RHI/OpenGL/OpenGLAPI.hpp"
 #include "Runtime/Resource/Manager/AssetManager.hpp"
 
@@ -73,8 +73,8 @@ void OpenGLRHI::CreateBuffer(RHIBufferCreateInfo create_info) {
     }
 }
 
-std::vector<OpenGLIndexDrawBuffer> OpenGLRHI::RenderMesh(std::vector<MeshData> meshs_data) {
-    std::vector<OpenGLIndexDrawBuffer> draw_buffers;
+std::vector<RHIIndexDrawBuffer> OpenGLRHI::RenderMesh(std::vector<MeshData> meshs_data) {
+    std::vector<RHIIndexDrawBuffer> draw_buffers;
     uint32_t program_id = m_asset_manager->GetProgram("mesh");
     for (MeshData mesh_data : meshs_data) {
         const RawVertexBuffer& vertex_buffer = mesh_data.vertex_buffer;
@@ -91,7 +91,7 @@ std::vector<OpenGLIndexDrawBuffer> OpenGLRHI::RenderMesh(std::vector<MeshData> m
             OpenGLAPI::CreateVertexArray(position_id, index_id, KOpenGLMeshVertexLayout);
         uint32_t normal_vertex_array_id = OpenGLAPI::CreateVertexArray(normal_id, index_id, KOpenGLMeshVertexLayout);
 
-        OpenGLIndexDrawBuffer position_draw_buffer;
+        RHIIndexDrawBuffer position_draw_buffer;
         position_draw_buffer.draw_mode = GL_TRIANGLES;
         position_draw_buffer.index_count = index_buffer.primitive_count;
         position_draw_buffer.index_type = GL_UNSIGNED_INT;
@@ -99,7 +99,7 @@ std::vector<OpenGLIndexDrawBuffer> OpenGLRHI::RenderMesh(std::vector<MeshData> m
         position_draw_buffer.vertex_array_id = position_vertex_array_id;
         position_draw_buffer.program_id = program_id;
 
-        OpenGLIndexDrawBuffer normal_draw_buffer;
+        RHIIndexDrawBuffer normal_draw_buffer;
         normal_draw_buffer.draw_mode = GL_TRIANGLES;
         normal_draw_buffer.index_count = index_buffer.primitive_count;
         normal_draw_buffer.index_type = GL_UNSIGNED_INT;
@@ -137,7 +137,7 @@ void OpenGLRHI::Tick() {
     assert(m_draw_buffers.size() > 0);
 
     for (int i = 0; i < m_draw_buffers.size(); i++) {
-        OpenGLIndexDrawBuffer draw_buffer = m_draw_buffers[i];
+        RHIIndexDrawBuffer draw_buffer = m_draw_buffers[i];
         glBindVertexArray(draw_buffer.vertex_array_id);
         glUseProgram(draw_buffer.program_id);
         glDrawElements(draw_buffer.draw_mode, draw_buffer.index_count, draw_buffer.index_type,

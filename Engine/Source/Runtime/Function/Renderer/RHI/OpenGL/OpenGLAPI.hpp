@@ -5,7 +5,7 @@
 #include <cstdint>
 #include <vector>
 
-#include "Runtime/Function/Renderer/RHI/RHI_Struct.hpp"
+#include "Runtime/Function/Renderer/RHI/RHIStruct.hpp"
 
 namespace RendererDemo {
 

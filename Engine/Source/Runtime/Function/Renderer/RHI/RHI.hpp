@@ -3,8 +3,8 @@
 #include <cstdint>
 #include <memory>
 
-#include "Runtime/Function/Renderer/RHI/RHI_Types.hpp"
-#include "Runtime/Function/Renderer/RHI/RHI_Struct.hpp"
+#include "Runtime/Function/Renderer/RHI/RHITypes.hpp"
+#include "Runtime/Function/Renderer/RHI/RHIStruct.hpp"
 #include "Runtime/Function/Window/WindowSystem.hpp"
 #include "Runtime/Resource/Manager/AssetManager.hpp"
 
@@ -31,14 +31,6 @@ public:
     virtual void GetTextureOfRenderResult(uint64_t& texture_id){};
 
     virtual void Tick() = 0;
-
-    /* -------------------------------------------------------------------------- */
-    /*                                   Old API                                  */
-    /* -------------------------------------------------------------------------- */
-
-    virtual void DrawExample(){};
-
-    // TODO: Add clear functions
 };
 
 } // namespace RendererDemo
