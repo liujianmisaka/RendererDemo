@@ -1,15 +1,23 @@
 #include "Runtime/Function/Framework/Component/Mesh/MeshComponent.hpp"
 #include <assimp/postprocess.h>
+#include <cstdint>
 #include <iostream>
 #include "Runtime/Function/Framework/Component/Mesh/RawMesh.hpp"
+#include "Runtime/Function/Framework/Component/Render/IndexDrawBufferComponent.hpp"
+#include "Runtime/Function/Framework/Component/State/StateComponent.hpp"
 
 namespace RendererDemo {
 
-void MeshComponent::LoadModel(std::string path) {
-    LoadMesh(path);
+void MeshComponent::Tick(float ts) {
+    auto state_component = ObjectGetComponent<StateComponent>();
+    if (!ObjectHasComponent<IndexDrawBufferComponent>() && ObjectGetComponent<StateComponent>().IsRendereable()) {
+        auto& draw_component = ObjectAddComponent<IndexDrawBufferComponent>();
+        auto& mesh_component = ObjectGetComponent<MeshComponent>();
+        draw_component.GenerateIndexDrawBuffer(mesh_component.MeshData());
+    }
 }
 
-void MeshComponent::Tick(float ts){};
+void MeshComponent::LoadModel(std::string path) { LoadMesh(path); }
 
 void MeshComponent::LoadMesh(std::string path) {
     Assimp::Importer importer;
@@ -36,43 +44,33 @@ void MeshComponent::processNode(aiNode* node, const aiScene* scene) {
 }
 
 void MeshComponent::processMesh(aiMesh* mesh, const aiScene* scene) {
-    RawVertexBuffer vertex_buffes;
-    RawIndexBuffer index_buffers;
+    RawVertexBuffer& vertex_buffes = m_mesh_data.vertex_buffer;
+    RawIndexBuffer& index_buffers = m_mesh_data.index_buffer;
+    MaterialTexture& material_texture = m_mesh_data.material_texture;
+
+    uint32_t vertex_data_size = vertex_buffes.vertex_count;
 
     for (uint32_t i = 0; i < mesh->mNumVertices; i++) {
-        vertex_buffes.positions.emplace_back(mesh->mVertices[i].x);
-        vertex_buffes.positions.emplace_back(mesh->mVertices[i].y);
-        vertex_buffes.positions.emplace_back(mesh->mVertices[i].z);
-        vertex_buffes.normals.emplace_back(mesh->mNormals[i].x);
-        vertex_buffes.normals.emplace_back(mesh->mNormals[i].y);
-        vertex_buffes.normals.emplace_back(mesh->mNormals[i].z);
+        vertex_buffes.positions.insert(vertex_buffes.positions.end(),
+                                       {mesh->mVertices[i].x, mesh->mVertices[i].y, mesh->mVertices[i].z});
+        vertex_buffes.normals.insert(vertex_buffes.normals.end(),
+                                     {mesh->mNormals[i].x, mesh->mNormals[i].y, mesh->mNormals[i].z});
 
         if (mesh->mTextureCoords[0]) {
-            vertex_buffes.texcoords.emplace_back(mesh->mTextureCoords[0][i].x);
-            vertex_buffes.texcoords.emplace_back(mesh->mTextureCoords[0][i].y);
+            vertex_buffes.uvs.insert(vertex_buffes.uvs.end(),
+                                     {mesh->mTextureCoords[0][i].x, mesh->mTextureCoords[0][i].y});
         } else {
-            vertex_buffes.texcoords.emplace_back(0.0f);
-            vertex_buffes.texcoords.emplace_back(0.0f);
+            vertex_buffes.uvs.insert(vertex_buffes.uvs.end(), {0.0f, 0.0f});
         }
 
         if (mesh->HasTangentsAndBitangents()) {
-            vertex_buffes.tangents.emplace_back(mesh->mTangents[i].x);
-            vertex_buffes.tangents.emplace_back(mesh->mTangents[i].y);
-            vertex_buffes.tangents.emplace_back(mesh->mTangents[i].z);
+            vertex_buffes.tangents.insert(vertex_buffes.tangents.end(),
+                                          {mesh->mTangents[i].x, mesh->mTangents[i].y, mesh->mTangents[i].z});
+            vertex_buffes.bitangents.insert(vertex_buffes.bitangents.end(),
+                                            {mesh->mBitangents[i].x, mesh->mBitangents[i].y, mesh->mBitangents[i].z});
         } else {
-            vertex_buffes.tangents.emplace_back(0.0f);
-            vertex_buffes.tangents.emplace_back(0.0f);
-            vertex_buffes.tangents.emplace_back(0.0f);
-        }
-
-        if (mesh->HasTangentsAndBitangents()) {
-            vertex_buffes.uvs.emplace_back(mesh->mBitangents[i].x);
-            vertex_buffes.uvs.emplace_back(mesh->mBitangents[i].y);
-            vertex_buffes.uvs.emplace_back(mesh->mBitangents[i].z);
-        } else {
-            vertex_buffes.uvs.emplace_back(0.0f);
-            vertex_buffes.uvs.emplace_back(0.0f);
-            vertex_buffes.uvs.emplace_back(0.0f);
+            vertex_buffes.tangents.insert(vertex_buffes.tangents.end(), {0.0f, 0.0f, 0.0f});
+            vertex_buffes.bitangents.insert(vertex_buffes.bitangents.end(), {0.0f, 0.0f, 0.0f});
         }
 
         vertex_buffes.vertex_count++;
@@ -82,12 +80,27 @@ void MeshComponent::processMesh(aiMesh* mesh, const aiScene* scene) {
         aiFace face = mesh->mFaces[i];
 
         for (uint32_t j = 0; j < face.mNumIndices; j++) {
-            index_buffers.indices.emplace_back(face.mIndices[j]);
+            index_buffers.indices.emplace_back(face.mIndices[j] + vertex_data_size);
         }
         index_buffers.primitive_count++;
     }
 
-    m_meshs_data.emplace_back(MeshData{vertex_buffes, index_buffers});
+    if (mesh->mMaterialIndex >= 0) {
+        aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
+
+        aiString texture_path;
+        if (material->GetTexture(aiTextureType_DIFFUSE, 0, &texture_path) == AI_SUCCESS) {
+            material_texture.base_color = texture_path.C_Str();
+        }
+
+        if (material->GetTexture(aiTextureType_NORMALS, 0, &texture_path) == AI_SUCCESS) {
+            material_texture.normal = texture_path.C_Str();
+        }
+
+        if (material->GetTexture(aiTextureType_METALNESS, 0, &texture_path) == AI_SUCCESS) {
+            material_texture.metallic_roughness = texture_path.C_Str();
+        }
+    }
 }
 
 } // namespace RendererDemo

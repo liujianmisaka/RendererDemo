@@ -1,28 +1,22 @@
-#include "Runtime/Function/RuntimeContext/RuntimeContext.hpp"
-
-#include <memory>
-#include "Runtime/Core/Log/LogSystem.hpp"
-#include "Runtime/Function/Framework/Manager/GameWorldManager.hpp"
-#include "Runtime/Function/Renderer/RenderSystem.hpp"
-#include "Runtime/Function/Window/WindowSystem.hpp"
-#include "Runtime/Function/event/EventSystem.hpp"
-#include "Runtime/Resource/Manager/AssetManager.hpp"
+#include "Runtime/RuntimeContext.hpp"
 
 namespace RendererDemo {
 
-RuntimeContext g_runtime_context;
-
-void RuntimeContext::StartSystem() {
+RuntimeContext::RuntimeContext() {
     m_log_system = std::make_shared<LogSystem>();
     m_game_world_manager = std::make_shared<GameWorldManager>();
     m_window_system = std::make_shared<WindowSystem>();
     m_renderer_system = std::make_shared<RendererSystem>();
     m_event_system = std::make_shared<EventSystem>();
     m_asset_manager = std::make_shared<AssetManager>();
+}
 
-    m_game_world_manager->Initialize();
-
+void RuntimeContext::StartSystem() {
     m_window_system->Initialize();
+
+    GameWorldManagerInitInfo game_world_manager_init_info;
+    game_world_manager_init_info.m_window_system = m_window_system;
+    m_game_world_manager->Initialize(game_world_manager_init_info);
 
     RendererSystemInitInfo render_system_init_info;
     render_system_init_info.graphics_api = GraphicsAPI::OpenGL;

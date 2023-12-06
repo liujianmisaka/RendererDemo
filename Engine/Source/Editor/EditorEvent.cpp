@@ -1,12 +1,10 @@
 #include "Editor/EditorEvent.hpp"
 #include <iostream>
-#include "Runtime/Function/Event/EventCode.hpp"
-#include "Runtime/Function/RuntimeContext/RuntimeContext.hpp"
-#include "Runtime/Function/Event/EventSystem.hpp"
 
 namespace RendererDemo {
 
-void EditorEvent::Initialize() {
+void EditorEvent::Initialize(std::shared_ptr<EventSystem> event_system) {
+    m_event_system = event_system;
     SyncEventStatus();
 }
 
@@ -19,12 +17,8 @@ void EditorEvent::Tick() {
     }
 }
 
-void EditorEvent::SyncEventStatus() {
-    m_event_status = g_runtime_context.m_event_system->GetEventStatus();
-}
+void EditorEvent::SyncEventStatus() { m_event_status = m_event_system->GetEventStatus(); }
 
-bool EditorEvent::IsKeyPressed(KeyboardCode code) {
-    return m_event_status.keyboard_status[static_cast<int>(code)];
-}
+bool EditorEvent::IsKeyPressed(KeyboardCode code) { return m_event_status.keyboard_status[static_cast<int>(code)]; }
 
 } // namespace RendererDemo

@@ -1,13 +1,17 @@
 #pragma once
 
 #include <memory>
-#include <string>
-#include <unordered_map>
+#include "Runtime/Function/Framework/Scene/Scene.hpp"
+#include "Runtime/Function/Window/WindowSystem.hpp"
 
 namespace RendererDemo {
 
 class Scene;
 class OpenGLRHI;
+
+struct GameWorldManagerInitInfo {
+    std::shared_ptr<WindowSystem> m_window_system;
+};
 
 class GameWorldManager {
     friend class RendererDemo::OpenGLRHI;
@@ -16,25 +20,16 @@ public:
     GameWorldManager() = default;
     ~GameWorldManager() = default;
 
-    void Initialize();
+    void Initialize(GameWorldManagerInitInfo init_info);
     void Clear();
 
     void Tick(float ts);
 
-    void AddScene(std::string name, std::shared_ptr<Scene> scene) {
-        m_scenes[name] = scene;
-        if (m_current_active_scene == nullptr) {
-            m_current_active_scene = scene;
-        }
-    }
-
-    std::shared_ptr<Scene> GetActivateScene() {
-        return m_current_active_scene;
-    }
+    std::shared_ptr<Scene> GetCurrentActivateScene() { return m_current_active_scene; }
 
 private:
     std::shared_ptr<Scene> m_current_active_scene = nullptr;
-    std::unordered_map<std::string, std::shared_ptr<Scene>> m_scenes;
+    std::shared_ptr<WindowSystem> m_window_system = nullptr;
 };
 
 } // namespace RendererDemo

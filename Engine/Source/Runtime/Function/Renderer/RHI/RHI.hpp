@@ -1,10 +1,9 @@
 #pragma once
 
-#include <cstdint>
 #include <memory>
-
-#include "Runtime/Function/Renderer/RHI/RHI_Types.hpp"
-#include "Runtime/Function/Renderer/RHI/RHI_Struct.hpp"
+#include <imgui.h>
+#include "Runtime/Function/Renderer/RHI/RHITypes.hpp"
+#include "Runtime/Function/Renderer/RHI/RHIStruct.hpp"
 #include "Runtime/Function/Window/WindowSystem.hpp"
 #include "Runtime/Resource/Manager/AssetManager.hpp"
 
@@ -24,21 +23,14 @@ public:
 
     virtual void Initialize(RHIInitInfo rhi_init_info) = 0;
     virtual void Clear(){};
+    virtual void Tick() = 0;
+
+    virtual void GetImTextureID(ImTextureID& texture_id){};
+    virtual void SetViewport(int width, int height){};
+
     virtual void CreateBuffer(RHIBufferCreateInfo create_info){};
     virtual void CreateVertexLayout(std::vector<RHIElementType> info){};
     virtual void CreateIndexDrawBuffer(){};
-
-    virtual void GetTextureOfRenderResult(uint64_t& texture_id){};
-
-    virtual void Tick() = 0;
-
-    /* -------------------------------------------------------------------------- */
-    /*                                   Old API                                  */
-    /* -------------------------------------------------------------------------- */
-
-    virtual void DrawExample(){};
-
-    // TODO: Add clear functions
 };
 
 } // namespace RendererDemo

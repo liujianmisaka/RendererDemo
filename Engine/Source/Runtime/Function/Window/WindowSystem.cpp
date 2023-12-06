@@ -1,14 +1,13 @@
 #include "Runtime/Function/Window/WindowSystem.hpp"
 #include <iostream>
 #include <stdexcept>
-#include <utility>
 
 namespace RendererDemo {
 
 void WindowSystem::Initialize(int width, int height, const std::string& title) {
     m_width = width;
     m_height = height;
-    m_title = std::move(title);
+    m_title = title;
 
     if (!glfwInit()) {
         std::cerr << "Failed to initialize GLFW" << std::endl;
@@ -37,33 +36,24 @@ void WindowSystem::Clear() {
     glfwTerminate();
 }
 
-bool WindowSystem::ShouldClose() const {
-    return glfwWindowShouldClose(m_GLFWWindow);
+void WindowSystem::Tick() {
+    SwapBuffers();
+    PollEvents();
 }
 
-void WindowSystem::PollEvents() const {
-    glfwPollEvents();
-}
+bool WindowSystem::ShouldClose() const { return glfwWindowShouldClose(m_GLFWWindow); }
 
-void WindowSystem::SwapBuffers() const {
-    glfwSwapBuffers(m_GLFWWindow);
-}
+void WindowSystem::PollEvents() const { glfwPollEvents(); }
 
-GLFWwindow* WindowSystem::GetNativeWindow() const {
-    return m_GLFWWindow;
-}
+void WindowSystem::SwapBuffers() const { glfwSwapBuffers(m_GLFWWindow); }
 
-WindowDelegateData& WindowSystem::GetWindowDelegateData() {
-    return m_window_delegate_data;
-}
+GLFWwindow* WindowSystem::GetNativeWindow() const { return m_GLFWWindow; }
 
-int WindowSystem::GetWidth() const {
-    return m_width;
-}
+WindowDelegateData& WindowSystem::GetWindowDelegateData() { return m_window_delegate_data; }
 
-int WindowSystem::GetHeight() const {
-    return m_height;
-}
+int WindowSystem::GetWidth() const { return m_width; }
+
+int WindowSystem::GetHeight() const { return m_height; }
 
 void WindowSystem::SetGLFWCallbacks() {
     glfwSetWindowCloseCallback(m_GLFWWindow, WindowCloseCallback);

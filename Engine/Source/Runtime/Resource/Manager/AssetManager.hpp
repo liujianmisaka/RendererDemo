@@ -17,9 +17,9 @@ public:
     void Initialize();
     void Clear(){};
 
-    uint32_t GetProgram(std::string name) {
-        return m_shader_hanlder->GetProgram(name);
-    }
+    uint32_t GetProgram(std::string name) { return m_shader_hanlder->GetProgram(name); }
+
+    std::vector<uint32_t> GetProgramVector() { return m_shader_hanlder->GetProgramVector(); }
 
 private:
     std::shared_ptr<ShaderResource> m_shader_hanlder;

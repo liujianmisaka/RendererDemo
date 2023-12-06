@@ -1,6 +1,8 @@
 #pragma once
 
 #include <memory>
+#include <imgui.h>
+#include "Runtime/Function/Renderer/RHI/RHI.hpp"
 
 namespace RendererDemo {
 
@@ -28,9 +30,11 @@ public:
 
     void Tick(float ts);
 
-    std::shared_ptr<RHI> GetRHI() {
-        return m_rhi;
-    }
+    std::shared_ptr<RHI> GetRHI() { return m_rhi; }
+
+    ImTextureID GetImTextureID();
+
+    void SetViewport(int width, int height);
 
 private:
     std::shared_ptr<RHI> CreateGrapicsAPIInstance(GraphicsAPI api);

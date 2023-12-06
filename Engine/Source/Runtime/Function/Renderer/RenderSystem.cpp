@@ -2,9 +2,7 @@
 #include <memory>
 #include <stdexcept>
 
-#include "Runtime/Function/Renderer/RHI/RHI.hpp"
 #include "Runtime/Function/Renderer/RHI/OpenGL/OpenGLRHI.hpp"
-#include "Runtime/Function/Renderer/RHI/Vulkan/VulkanRHI.hpp"
 
 namespace RendererDemo {
 
@@ -19,9 +17,15 @@ void RendererSystem::Initialize(RendererSystemInitInfo render_system_init_info) 
 
 void RendererSystem::Clear(){};
 
-void RendererSystem::Tick(float ts) {
-    m_rhi->Tick();
+void RendererSystem::Tick(float ts) { m_rhi->Tick(); }
+
+ImTextureID RendererSystem::GetImTextureID() {
+    ImTextureID texture_id;
+    m_rhi->GetImTextureID(texture_id);
+    return texture_id;
 }
+
+void RendererSystem::SetViewport(int width, int height) { m_rhi->SetViewport(width, height); }
 
 /* -------------------------------------------------------------------------- */
 /*                                private apis                                */
@@ -30,8 +34,6 @@ void RendererSystem::Tick(float ts) {
 std::shared_ptr<RHI> RendererSystem::CreateGrapicsAPIInstance(GraphicsAPI api) {
     if (api == GraphicsAPI::OpenGL) {
         return std::make_shared<OpenGLRHI>();
-    } else if (api == GraphicsAPI::Vulkan) {
-        return std::make_shared<VulkanRHI>();
     } else {
         throw std::runtime_error("No such graphics api.");
     }

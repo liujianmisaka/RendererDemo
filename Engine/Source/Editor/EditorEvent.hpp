@@ -1,7 +1,9 @@
 #pragma once
 
+#include <memory>
 #include "Runtime/Function/Event/EventCode.hpp"
 #include "Runtime/Function/Event/EventStatus.hpp"
+#include "Runtime/Function/Event/EventSystem.hpp"
 
 namespace RendererDemo {
 
@@ -10,7 +12,7 @@ public:
     EditorEvent() = default;
     ~EditorEvent() = default;
 
-    void Initialize();
+    void Initialize(std::shared_ptr<EventSystem> event_system);
     void Clear();
 
     void Tick();
@@ -21,6 +23,7 @@ private:
     bool IsKeyPressed(KeyboardCode code);
 
 private:
+    std::shared_ptr<EventSystem> m_event_system = nullptr;
     EventStatus m_event_status;
 };
 

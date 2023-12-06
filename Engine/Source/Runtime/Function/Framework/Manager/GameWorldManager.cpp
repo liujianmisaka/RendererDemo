@@ -3,14 +3,13 @@
 
 namespace RendererDemo {
 
-void GameWorldManager::Initialize() {}
+void GameWorldManager::Initialize(GameWorldManagerInitInfo init_info) {
+    m_window_system = init_info.m_window_system;
+    m_current_active_scene = std::make_shared<Scene>();
+}
 
 void GameWorldManager::Clear() {}
 
-void GameWorldManager::Tick(float ts) {
-    if (m_current_active_scene) {
-        m_current_active_scene->Tick(ts);
-    }
-}
+void GameWorldManager::Tick(float ts) { m_current_active_scene->Tick(ts); }
 
 } // namespace RendererDemo

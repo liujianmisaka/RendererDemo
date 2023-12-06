@@ -1,6 +1,5 @@
 #pragma once
 
-#include <vector>
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 
@@ -11,23 +10,14 @@ namespace RendererDemo {
 
 class MeshComponent : public Component {
 public:
-    MeshComponent() = default;
+    MeshComponent(std::shared_ptr<entt::registry> registry, entt::entity entity) : Component(registry, entity) {}
     virtual ~MeshComponent() = default;
 
+	virtual void Tick(float ts) override;
+
     void LoadModel(std::string path);
-    virtual void Tick(float ts) override;
 
-    const std::vector<MeshData>& GetMeshData() {
-        return m_meshs_data;
-    }
-
-    void SetFlag(bool flag) {
-        this->flag = flag;
-    }
-
-    bool Flag() {
-        return flag;
-    }
+    const RendererDemo::StaticMeshData& MeshData() const { return m_mesh_data; }
 
 private:
     void LoadMesh(std::string path);
@@ -35,8 +25,8 @@ private:
     void processMesh(aiMesh* mesh, const aiScene* scene);
 
 private:
-    std::vector<MeshData> m_meshs_data{};
-    bool flag = false;
+    RendererDemo::StaticMeshData m_mesh_data;
+    // std::vector<RendererDemo::StaticMeshData> m_mesh_data{};
 };
 
 } // namespace RendererDemo

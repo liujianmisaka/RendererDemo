@@ -1,15 +1,17 @@
 #include "Runtime/Function/Renderer/RHI/OpenGL/OpenGLRHI.hpp"
-#include <cassert>
 #include <cstdint>
+#include <glm/fwd.hpp>
 #include <iostream>
 #include <memory>
 #include <imgui.h>
+#include <glm/gtc/type_ptr.hpp>
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
 
+#include "Runtime/Function/Framework/Component/Camera/Camera.hpp"
+#include "Runtime/Function/Framework/Component/Render/IndexDrawBufferComponent.hpp"
+#include "Runtime/Function/Framework/Component/Transform/TransformComponent.hpp"
 #include "Runtime/Function/Framework/FrameworkHeader.hpp"
-#include "Runtime/Function/Renderer/RHI/RenderInfo/MeshInfo.hpp"
-#include "Runtime/Function/Renderer/RHI/OpenGL/OpenGLAPI.hpp"
 #include "Runtime/Resource/Manager/AssetManager.hpp"
 
 namespace RendererDemo {
@@ -28,122 +30,85 @@ void OpenGLRHI::Initialize(RHIInitInfo rhi_init_info) {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-    glDisable(GL_CULL_FACE);
+    // glDisable(GL_CULL_FACE);
+    // glEnable(GL_DEPTH_TEST);
 
-    // 创建一个帧缓冲对象（FBO）和一个纹理
-    glGenFramebuffers(1, &m_fbo);
-    glGenTextures(1, &m_texture);
-    glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
-    glBindTexture(GL_TEXTURE_2D, m_texture);
+    CreateImageTextureForImGui();
 
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_window_system->GetWidth(), m_window_system->GetHeight(), 0, GL_RGBA,
-                 GL_UNSIGNED_BYTE, NULL);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_texture, 0);
-
-    glBindTexture(GL_TEXTURE_2D, 0);
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    // create camera ubo
+    glGenBuffers(1, &m_camera_ubo);
+    glBindBuffer(GL_UNIFORM_BUFFER, m_camera_ubo);
+    glBufferData(GL_UNIFORM_BUFFER, sizeof(glm::mat4) * 3, NULL, GL_STATIC_DRAW);
+    glBindBuffer(GL_UNIFORM_BUFFER, 0);
+    glBindBufferBase(GL_UNIFORM_BUFFER, 0, m_camera_ubo);
 }
 
 void OpenGLRHI::Clear() {}
 
-void OpenGLRHI::CreateBuffer(RHIBufferCreateInfo create_info) {
-    uint32_t buffer_id = 0;
-    switch (create_info.buffer_type) {
-        case RHIBufferType::VertexBuffer: {
-            buffer_id = OpenGLAPI::CreateVertexBuffer(create_info.byte_size, create_info.data);
-            m_vertex_buffers[create_info.name] = buffer_id;
-            break;
-        }
-        case RHIBufferType::IndexBuffer: {
-            buffer_id = OpenGLAPI::CreateIndexBuffer(create_info.byte_size, create_info.data);
-            m_index_buffers[create_info.name] = buffer_id;
-            break;
-        }
-        case RHIBufferType::UniformBuffer: {
-            buffer_id = OpenGLAPI::CreateUniformBuffer(create_info.byte_size, create_info.data);
-            m_uniform_buffers[create_info.name] = buffer_id;
-            break;
-        }
-        default: {
-            std::cerr << "Unhandled buffer type in switch statement" << std::endl;
-            break;
-        }
-    }
+void OpenGLRHI::GetImTextureID(ImTextureID& texture_id) { texture_id = (ImTextureID)(uint64_t)m_texture2d; }
+
+void OpenGLRHI::SetViewport(int width, int height) {
+    glViewport(0, 0, width, height);
+    m_texture2d.TexImage2D(width, height);
 }
-
-std::vector<OpenGLIndexDrawBuffer> OpenGLRHI::RenderMesh(std::vector<MeshData> meshs_data) {
-    std::vector<OpenGLIndexDrawBuffer> draw_buffers;
-    uint32_t program_id = m_asset_manager->GetProgram("mesh");
-    for (MeshData mesh_data : meshs_data) {
-        const RawVertexBuffer& vertex_buffer = mesh_data.vertex_buffer;
-        const RawIndexBuffer& index_buffer = mesh_data.index_buffer;
-
-        uint32_t position_id = OpenGLAPI::CreateVertexBuffer(vertex_buffer.vertex_count * sizeof(float) * 3,
-                                                             vertex_buffer.positions.data());
-        uint32_t normal_id =
-            OpenGLAPI::CreateVertexBuffer(vertex_buffer.vertex_count * sizeof(float) * 3, vertex_buffer.normals.data());
-        uint32_t index_id = OpenGLAPI::CreateIndexBuffer(index_buffer.primitive_count * sizeof(unsigned int),
-                                                         index_buffer.indices.data());
-
-        uint32_t position_vertex_array_id =
-            OpenGLAPI::CreateVertexArray(position_id, index_id, KOpenGLMeshVertexLayout);
-        uint32_t normal_vertex_array_id = OpenGLAPI::CreateVertexArray(normal_id, index_id, KOpenGLMeshVertexLayout);
-
-        OpenGLIndexDrawBuffer position_draw_buffer;
-        position_draw_buffer.draw_mode = GL_TRIANGLES;
-        position_draw_buffer.index_count = index_buffer.primitive_count;
-        position_draw_buffer.index_type = GL_UNSIGNED_INT;
-        position_draw_buffer.index_offset = 0;
-        position_draw_buffer.vertex_array_id = position_vertex_array_id;
-        position_draw_buffer.program_id = program_id;
-
-        OpenGLIndexDrawBuffer normal_draw_buffer;
-        normal_draw_buffer.draw_mode = GL_TRIANGLES;
-        normal_draw_buffer.index_count = index_buffer.primitive_count;
-        normal_draw_buffer.index_type = GL_UNSIGNED_INT;
-        normal_draw_buffer.index_offset = 0;
-        normal_draw_buffer.vertex_array_id = normal_vertex_array_id;
-        normal_draw_buffer.program_id = program_id;
-
-        draw_buffers.emplace_back(position_draw_buffer);
-        draw_buffers.emplace_back(normal_draw_buffer);
-    }
-    return draw_buffers;
-}
-
-void OpenGLRHI::RenderCamera() {}
-
-void OpenGLRHI::GetTextureOfRenderResult(uint64_t& texture_id) { texture_id = m_texture; }
 
 void OpenGLRHI::Tick() {
-    auto scene = m_game_world_manager->GetActivateScene();
-    for (auto& object : scene->GetObjects()) {
-        if (object.first == "basic_object") {
-            auto mesh_component = object.second->GetComponent<MeshComponent>();
-            if (mesh_component == nullptr || mesh_component->Flag()) continue;
-            const std::vector<MeshData>& meshs_data = mesh_component->GetMeshData();
-            m_draw_buffers = RenderMesh(meshs_data);
-            mesh_component->SetFlag(true);
+    auto scene = m_game_world_manager->GetCurrentActivateScene();
+    BeginFrame(scene->GetRenderCamera());
+
+    {
+        auto view = scene->GetAllObjectWith<IndexDrawBufferComponent, TransformComponent>();
+        for (auto entity : view) {
+            const auto& draw_buffer_component = view.get<IndexDrawBufferComponent>(entity);
+            const auto& draw_buffers = draw_buffer_component.GetDrawBuffers();
+            {
+                const auto& transform_component = view.get<TransformComponent>(entity);
+                const auto& model_matrix = transform_component.GetModelMatrix();
+                glBindBuffer(GL_UNIFORM_BUFFER, m_camera_ubo);
+                glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), glm::value_ptr(model_matrix));
+                glBindBuffer(GL_UNIFORM_BUFFER, 0);
+            }
+            uint32_t program_id = m_asset_manager->GetProgram("mesh");
+            glUseProgram(program_id);
+            for (const auto& draw_buffer : draw_buffers) {
+                glBindVertexArray(draw_buffer.vertex_array_id);
+                glDrawElements(draw_buffer.draw_mode, draw_buffer.index_count, draw_buffer.index_type,
+                               (void*)draw_buffer.index_offset);
+                glBindVertexArray(0);
+            }
+            glUseProgram(0);
         }
     }
 
-    glClear(GL_COLOR_BUFFER_BIT);
+    EndFrame();
+}
 
-    glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
+void OpenGLRHI::BeginFrame(Camera& camera) {
+    auto& view_matrix = camera.GetViewMatrix();
+    auto& projection_matrix = camera.GetPerspectiveProjectionMatrix();
+    glBindBuffer(GL_UNIFORM_BUFFER, m_camera_ubo);
+    glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(view_matrix));
+    glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::mat4) * 2, sizeof(glm::mat4), glm::value_ptr(projection_matrix));
+    glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
-    // TODO: Add default draw buffer when no draw buffer is created
-    assert(m_draw_buffers.size() > 0);
+    // glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    // glClearColor(0.0f, 0.0f, 1.0f, 0.5f);
+    m_frame_buffer.Clear();
+}
+void OpenGLRHI::EndFrame() { m_frame_buffer.UnBind(); }
 
-    for (int i = 0; i < m_draw_buffers.size(); i++) {
-        OpenGLIndexDrawBuffer draw_buffer = m_draw_buffers[i];
-        glBindVertexArray(draw_buffer.vertex_array_id);
-        glUseProgram(draw_buffer.program_id);
-        glDrawElements(draw_buffer.draw_mode, draw_buffer.index_count, draw_buffer.index_type,
-                       (void*)draw_buffer.index_offset);
-    }
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+void OpenGLRHI::CreateImageTextureForImGui() {
+    m_frame_buffer.Create();
+    m_texture2d.Create();
+    m_sampler.Create();
+
+    m_texture2d.TexImage2D(m_window_system->GetWidth(), m_window_system->GetHeight());
+    // m_sampler.Bind((uint32_t)m_texture2d);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); // TODO: use sampler
+    m_frame_buffer.BindTexture2D((uint32_t)m_texture2d);
+
+    m_texture2d.UnBind();
+    m_frame_buffer.UnBind();
 }
 
 } // namespace RendererDemo

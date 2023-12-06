@@ -8,49 +8,38 @@ namespace RendererDemo {
 
 class TransformComponent : public Component {
 public:
-    TransformComponent() = default;
+    TransformComponent(std::shared_ptr<entt::registry> registry, entt::entity entity) : Component(registry, entity) {}
     TransformComponent(const glm::vec3& position, const glm::vec3& rotation, const glm::vec3& scale);
-    ~TransformComponent() = default;
+    virtual ~TransformComponent() override = default;
 
-    glm::mat4 GetModelMatrix() {
-        return m_model_matrix;
-    }
+    virtual void Tick(float ts) override;
 
-    glm::vec3 GetPosition() {
-        return m_position;
-    }
-
-    glm::vec3 GetRotation() {
-        return m_rotation;
-    }
-
-    glm::vec3 GetScale() {
-        return m_scale;
-    }
+    // Getters and Setters
+    const glm::vec3& GetPosition() const { return m_position; }
+    const glm::vec3& GetRotation() const { return m_rotation; }
+    const glm::vec3& GetScale() const { return m_scale; }
 
     void SetPosition(const glm::vec3& position) {
+        m_dirty = true;
         m_position = position;
-        UpdateModelMatrix();
     }
-
     void SetRotation(const glm::vec3& rotation) {
+        m_dirty = true;
         m_rotation = rotation;
-        UpdateModelMatrix();
     }
-
     void SetScale(const glm::vec3& scale) {
+        m_dirty = true;
         m_scale = scale;
-        UpdateModelMatrix();
     }
 
-private:
-    void UpdateModelMatrix();
+    const glm::mat4& GetModelMatrix() const { return m_model_matrix; }
 
 private:
-    glm::mat4 m_model_matrix = glm::mat4(1.0f);
     glm::vec3 m_position = glm::vec3(0.0f);
     glm::vec3 m_rotation = glm::vec3(0.0f);
     glm::vec3 m_scale = glm::vec3(1.0f);
+
+    glm::mat4 m_model_matrix = glm::mat4(1.0f);
 };
 
 } // namespace RendererDemo

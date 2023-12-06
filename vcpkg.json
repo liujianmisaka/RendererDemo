@@ -41,6 +41,10 @@
 			"platform": "(windows & x64) | (windows & x86)"
 		},
 		{
+			"name": "yaml-cpp",
+			"platform": "(windows & x64) | (windows & x86)"
+		},
+		{
 			"name": "vcpkg-cmake",
 			"host": true
 		},

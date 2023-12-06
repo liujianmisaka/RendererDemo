@@ -1,15 +1,16 @@
 #include "Runtime/Function/Framework/Component/Transform/TransformComponent.hpp"
 #include <glm/gtc/matrix_transform.hpp>
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/quaternion.hpp>
 
 namespace RendererDemo {
 
-void TransformComponent::UpdateModelMatrix() {
-    m_model_matrix = glm::mat4(1.0f);
-    m_model_matrix = glm::translate(m_model_matrix, m_position);
-    m_model_matrix = glm::rotate(m_model_matrix, glm::radians(m_rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
-    m_model_matrix = glm::rotate(m_model_matrix, glm::radians(m_rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
-    m_model_matrix = glm::rotate(m_model_matrix, glm::radians(m_rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
-    m_model_matrix = glm::scale(m_model_matrix, m_scale);
+void TransformComponent::Tick(float ts) {
+    if (m_dirty) {
+        m_model_matrix = glm::translate(glm::mat4(1.0f), m_position) * glm::toMat4(glm::quat(m_rotation)) *
+                         glm::scale(glm::mat4(1.0f), m_scale);
+        m_dirty = false;
+    }
 }
 
 } // namespace RendererDemo
