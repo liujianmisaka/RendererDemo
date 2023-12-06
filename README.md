@@ -1,5 +1,25 @@
 # dev log
 
+[ 2023-12-02 ] Add panels and advance `DrawVec3Control` function.
+
+[ 2023-12-01 ] Advance the editor ui panel and add yaml-cpp.
+
+[ 2023-11-28 ] (1) Delete unless component now. (2) Update ECS framework.
+
+[ 2023-11-27 ] Create imgui texture in function.
+
+[ 2023-11-24 ] Add default editor camera in the scene and move it in the editor.
+
+[ 2023-11-23 ] Now use editor context in editor and delete `g_runtime_context`.
+
+[ 2023-11-20 ] Fix glsl bug, clear framebuffer before write and add a rotation controller in editor ui..
+
+[ 2023-11-18 ] Add component in object and avoid #include loop.
+
+[ 2023-11-15 ] (1) Clean up Renderer files. (2) Use entt to manage object and component. (3) Use imgui docking space in EditorUI.
+
+[ 2023-11-14 ] Use imgui docking space in EditorUI.
+
 [ 2023-11-13 ] Merge current work and think about the next plan. 
 
 [ 2023-10-31 ] Add basic abstract RHI and OpenGL RHI.
