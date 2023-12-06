@@ -16,7 +16,7 @@ public:
 
     glm::vec3 GetPosition() { return m_position; }
 
-    glm::vec3 GetRotation() { return m_rotation; }
+    glm::vec3& GetRotation() { return m_rotation; }
 
     glm::vec3 GetScale() { return m_scale; }
 

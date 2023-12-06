@@ -10,6 +10,5 @@ layout(location = 0) out vec4 o_color;
 
 void main() {
     o_color = vec4(pos, 1.);                   // 直接输出颜色数据
-	o_time = u_time;                             // 直接输出时间数据
     gl_Position = vec4(pos.x, pos.y, pos.z, 1.); // 直接输出位置数据
 }

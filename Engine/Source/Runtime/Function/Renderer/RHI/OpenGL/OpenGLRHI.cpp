@@ -148,9 +148,8 @@ void OpenGLRHI::Tick() {
 
     RenderSceneCamera(*scene);
 
-    glClear(GL_COLOR_BUFFER_BIT);
-
     glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
+    glClear(GL_COLOR_BUFFER_BIT);
 
     // TODO: Add default draw buffer when no draw buffer is created
     assert(m_draw_buffers.size() > 0);

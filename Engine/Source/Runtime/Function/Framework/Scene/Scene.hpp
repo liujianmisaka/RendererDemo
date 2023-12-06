@@ -70,6 +70,11 @@ public:
         return transform_component.GetModelMatrix();
     }
 
+    glm::vec3& GetRotation() {
+        TransformComponent& transform_component = m_scene_camera.GetComponent<TransformComponent>();
+        return transform_component.GetRotation();
+    }
+
 private:
     std::shared_ptr<entt::registry> m_registry = std::make_shared<entt::registry>();
     Object m_selected_object{};
