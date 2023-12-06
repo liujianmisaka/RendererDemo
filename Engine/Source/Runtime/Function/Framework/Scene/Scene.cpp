@@ -2,26 +2,24 @@
 #include <entt/entity/fwd.hpp>
 #include "Runtime/Function/Framework/Component/Mesh/MeshComponent.hpp"
 #include "Runtime/Function/Framework/Component/Render/IndexDrawBufferComponent.hpp"
-#include "Runtime/Function/Framework/Component/Render/UniformBufferComponent.hpp"
 #include "Runtime/Function/Framework/Component/State/StateComponent.hpp"
 #include "Runtime/Function/Framework/Component/Transform/TransformComponent.hpp"
 
 namespace RendererDemo {
 
 void Scene::Tick(float ts) {
-    m_scene_camera.Tick(ts);
-
     {
         // First call component Tick
         auto view = m_registry->view<TransformComponent>();
         for (auto entity : view) {
             auto objct = GetObject(entity);
             objct.GetComponent<TransformComponent>().Tick(ts);
+            auto& model_matrix = objct.GetComponent<TransformComponent>().GetModelMatrix();
         }
     }
 
     {
-        // Create IndexDrawBufferComponent if has MeshComponent but don't have IndexDrawBufferComponent
+        // Create IndexDrawBufferComponent of MeshComponent
         auto view = m_registry->view<MeshComponent>();
         for (auto entity : view) {
             auto object = GetObject(entity);
@@ -35,18 +33,21 @@ void Scene::Tick(float ts) {
     }
 
     {
-        // Set MVP for UniformBufferComponent
-        auto view = m_registry->view<TransformComponent>();
+        // Create IndexDrawBufferComponent of SquaComponent
+        auto view = m_registry->view<SquaComponent>();
         for (auto entity : view) {
             auto object = GetObject(entity);
-            auto& uniform_buffer_component = object.AddComponentNotReplace<UniformBufferComponent>();
-            auto& transform_component = object.GetComponent<TransformComponent>();
-            MVP mvp;
-            mvp.model = transform_component.GetModelMatrix();
-            mvp.view = m_scene_camera.GetViewProjection();
-            mvp.projection = m_scene_camera.GetProjection();
-            uniform_buffer_component.SetMVP(mvp);
+            if (!object.HasComponent<IndexDrawBufferComponent>() &&
+                object.GetComponent<StateComponent>().IsRendereable()) {
+                auto& draw_component = object.AddComponent<IndexDrawBufferComponent>();
+                auto& squa_component = object.GetComponent<SquaComponent>();
+                draw_component.GenerateIndexDrawBuffer(squa_component);
+            }
         }
+    }
+
+    {
+        // Create UniformBufferComponent of TransformComponent
     }
 }
 
@@ -64,14 +65,6 @@ Object Scene::GetObject(entt::entity entity) { return Object{entity, m_registry}
 void Scene::DestroyObject(Object object) {
     entt::entity entity = static_cast<entt::entity>(object);
     m_registry->destroy(entity);
-}
-
-SceneCamera Scene::CreateSceneCamera(UUID uuid, std::string name) {
-    entt::entity entity = m_registry->create();
-    m_registry->emplace<IdComponent>(entity, uuid);
-    m_registry->emplace<TagComponent>(entity, name);
-    m_registry->emplace<CameraComponent>(entity);
-    return SceneCamera{entity, m_registry};
 }
 
 } // namespace RendererDemo

@@ -49,7 +49,7 @@ public:
     float GetSqua() { return m_Squa; }
 
 private:
-    float m_Squa;
+    float m_Squa = 0.0f;
 };
 
 } // namespace RendererDemo

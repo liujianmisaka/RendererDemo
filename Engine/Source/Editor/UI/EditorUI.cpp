@@ -5,75 +5,15 @@
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
 #include <glm/glm.hpp>
-#include "Runtime/Function/Framework/Component/Transform/TransformComponent.hpp"
+#include <glm/gtc/type_ptr.hpp>
+#include "Editor/UI/Utils.hpp"
+#include "Runtime/Function/Framework/Component/Camera/CameraComponent.hpp"
 #include "Runtime/Function/Renderer/RenderSystem.hpp"
 #include "Runtime/Function/Window/WindowSystem.hpp"
 #include "Runtime/Function/Renderer/RHI/RHI.hpp"
 #include "Runtime/Function/Framework/Manager/GameWorldManager.hpp"
 
 namespace RendererDemo {
-
-static void DrawVec3Control(const std::string& label, glm::vec3& values, float resetValue = 0.0f,
-                            float columnWidth = 100.0f) {
-    ImGui::PushID(label.c_str());
-
-    auto boldFont = ImGui::GetIO().Fonts->Fonts[0];
-
-    ImGui::Columns(2);
-    ImGui::SetColumnWidth(0, columnWidth);
-
-    ImGui::TextUnformatted(label.c_str());
-    ImGui::NextColumn();
-
-    ImGui::PushMultiItemsWidths(3, ImGui::CalcItemWidth());
-    ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{0, 0});
-
-    // Learn: GImGui properties
-    const float lineHeight = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f;
-    const ImVec2 buttonSize = {lineHeight + 3.0f, lineHeight};
-
-    ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{0.8f, 0.1f, 0.15f, 1.0f});
-    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{0.9f, 0.2f, 0.2f, 1.0f});
-    ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{0.8f, 0.1f, 0.15f, 1.0f});
-    ImGui::PushFont(boldFont);
-    if (ImGui::Button("X", buttonSize)) values.x = resetValue;
-    ImGui::PopFont();
-    ImGui::PopStyleColor(3);
-    ImGui::SameLine();
-    ImGui::DragFloat("##X", &values.x, 0.1f, 0.0f, 0.0f, "%.2f");
-    ImGui::PopItemWidth();
-    ImGui::SameLine();
-
-    ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{0.2f, 0.7f, 0.2f, 1.0f});
-    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{0.3f, 0.8f, 0.3f, 1.0f});
-    ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{0.2f, 0.7f, 0.2f, 1.0f});
-    ImGui::PushFont(boldFont);
-    if (ImGui::Button("Y", buttonSize)) values.y = resetValue;
-    ImGui::PopFont();
-    ImGui::PopStyleColor(3);
-    ImGui::SameLine();
-    ImGui::DragFloat("##Y", &values.y, 0.1f, 0.0f, 0.0f, "%.2f");
-    ImGui::PopItemWidth();
-    ImGui::SameLine();
-
-    ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{0.1f, 0.25f, 0.8f, 1.0f});
-    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{0.2f, 0.35f, 0.9f, 1.0f});
-    ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{0.1f, 0.25f, 0.8f, 1.0f});
-    ImGui::PushFont(boldFont);
-    if (ImGui::Button("Z", buttonSize)) values.z = resetValue;
-    ImGui::PopFont();
-    ImGui::PopStyleColor(3);
-    ImGui::SameLine();
-    ImGui::DragFloat("##Z", &values.z, 0.1f, 0.0f, 0.0f, "%.2f");
-    ImGui::PopItemWidth();
-    ImGui::SameLine();
-
-    ImGui::PopStyleVar();
-
-    ImGui::Columns(1);
-
-    ImGui::PopID();
-}
 
 void EditorUI::Initialize(EditorUIInitInfo init_info) {
     m_window_system = init_info.window_system;
@@ -125,6 +65,7 @@ void EditorUI::Update() {
     m_width = m_window_system->GetWidth();
     m_height = m_window_system->GetHeight();
     m_scene_hierarchy_panel.SetContext(m_game_world_manager->GetCurrentActivateScene());
+    SetCamera(m_game_world_manager->GetCurrentActivateScene()->GetSceneCamera());
 }
 
 void EditorUI::BeginFrame() {
@@ -214,17 +155,54 @@ void EditorUI::RenderMenuBar() {
 
 void EditorUI::RenderSettings() {
     ImGui::Begin("setting");
-    auto scene = m_game_world_manager->GetCurrentActivateScene();
-    auto& transform_component = scene->GetSelectedObject().GetComponent<TransformComponent>();
-    auto roation = transform_component.GetRotation();
-    auto position = transform_component.GetPosition();
-    auto scale = transform_component.GetScale();
-    DrawVec3Control("Rotation", roation);
-    DrawVec3Control("Position", position);
-    DrawVec3Control("Scale", scale, 1.0f);
-    transform_component.SetRotation(roation);
-    transform_component.SetPosition(position);
-    transform_component.SetScale(scale);
+    auto& camera = m_camera_object.GetComponent<CameraComponent>().GetCamera();
+
+    auto position = camera.GetPosition();
+    if (ImGui::DragFloat3("Position", glm::value_ptr(position))) {
+        camera.SetPosition(position);
+    }
+
+    auto rotation = camera.GetRotation();
+    if (ImGui::DragFloat3("Rotation", glm::value_ptr(rotation))) {
+        camera.SetRotation(rotation);
+    }
+
+    auto aspect_ratio = camera.GetAspectRatio();
+    if (ImGui::DragFloat("Aspect Ratio", &aspect_ratio)) {
+        camera.SetAspectRatio(aspect_ratio);
+    }
+
+    auto fov = camera.GetFov();
+    if (ImGui::DragFloat("Perspective FOV", &fov)) {
+        camera.SetFov(fov);
+    }
+    auto near = camera.GetNearClip();
+    if (ImGui::DragFloat("Perspective Near", &near)) {
+        camera.SetNearClip(near);
+    }
+    auto far = camera.GetFarClip();
+    if (ImGui::DragFloat("Perspective Far", &far)) {
+        camera.SetFarClip(far);
+    }
+
+    auto view_matrix = camera.GetViewMatrix();
+    ImGui::Text("View Matrix");
+    ImGui::Text("%f %f %f %f", view_matrix[0][0], view_matrix[0][1], view_matrix[0][2], view_matrix[0][3]);
+    ImGui::Text("%f %f %f %f", view_matrix[1][0], view_matrix[1][1], view_matrix[1][2], view_matrix[1][3]);
+    ImGui::Text("%f %f %f %f", view_matrix[2][0], view_matrix[2][1], view_matrix[2][2], view_matrix[2][3]);
+    ImGui::Text("%f %f %f %f", view_matrix[3][0], view_matrix[3][1], view_matrix[3][2], view_matrix[3][3]);
+
+    auto projection_matrix = camera.GetPerspectiveProjectionMatrix();
+    ImGui::Text("Projection Matrix");
+    ImGui::Text("%f %f %f %f", projection_matrix[0][0], projection_matrix[0][1], projection_matrix[0][2],
+                projection_matrix[0][3]);
+    ImGui::Text("%f %f %f %f", projection_matrix[1][0], projection_matrix[1][1], projection_matrix[1][2],
+                projection_matrix[1][3]);
+    ImGui::Text("%f %f %f %f", projection_matrix[2][0], projection_matrix[2][1], projection_matrix[2][2],
+                projection_matrix[2][3]);
+    ImGui::Text("%f %f %f %f", projection_matrix[3][0], projection_matrix[3][1], projection_matrix[3][2],
+                projection_matrix[3][3]);
+
     ImGui::End();
 }
 

@@ -1,5 +1,6 @@
 #include "Runtime/Function/Renderer/RHI/OpenGL/OpenGLRHI.hpp"
 #include <cstdint>
+#include <glm/fwd.hpp>
 #include <iostream>
 #include <memory>
 #include <imgui.h>
@@ -7,10 +8,10 @@
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
 
+#include "Runtime/Function/Framework/Component/Camera/CameraComponent.hpp"
 #include "Runtime/Function/Framework/Component/Render/IndexDrawBufferComponent.hpp"
-#include "Runtime/Function/Framework/Component/Render/UniformBufferComponent.hpp"
+#include "Runtime/Function/Framework/Component/Transform/TransformComponent.hpp"
 #include "Runtime/Function/Framework/FrameworkHeader.hpp"
-#include "Runtime/Function/Renderer/RHI/OpenGL/OpenGLAPI.hpp"
 #include "Runtime/Resource/Manager/AssetManager.hpp"
 
 namespace RendererDemo {
@@ -30,6 +31,7 @@ void OpenGLRHI::Initialize(RHIInitInfo rhi_init_info) {
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
     glDisable(GL_CULL_FACE);
+    glEnable(GL_DEPTH_TEST);
 
     // 创建一个帧缓冲对象（FBO）和一个纹理
     glGenFramebuffers(1, &m_fbo);
@@ -45,72 +47,65 @@ void OpenGLRHI::Initialize(RHIInitInfo rhi_init_info) {
 
     glBindTexture(GL_TEXTURE_2D, 0);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    // create camera ubo
+    glGenBuffers(1, &m_camera_ubo);
+    glBindBuffer(GL_UNIFORM_BUFFER, m_camera_ubo);
+    glBufferData(GL_UNIFORM_BUFFER, sizeof(glm::mat4) * 3, NULL, GL_STATIC_DRAW);
+    glBindBuffer(GL_UNIFORM_BUFFER, 0);
+    glBindBufferBase(GL_UNIFORM_BUFFER, 0, m_camera_ubo);
 }
 
 void OpenGLRHI::Clear() {}
-
-void OpenGLRHI::CreateBuffer(RHIBufferCreateInfo create_info) {
-    uint32_t buffer_id = 0;
-    switch (create_info.buffer_type) {
-        case RHIBufferType::VertexBuffer: {
-            buffer_id = OpenGLAPI::CreateVertexBuffer(create_info.byte_size, create_info.data);
-            m_vertex_buffers[create_info.name] = buffer_id;
-            break;
-        }
-        case RHIBufferType::IndexBuffer: {
-            buffer_id = OpenGLAPI::CreateIndexBuffer(create_info.byte_size, create_info.data);
-            m_index_buffers[create_info.name] = buffer_id;
-            break;
-        }
-        case RHIBufferType::UniformBuffer: {
-            buffer_id = OpenGLAPI::CreateUniformBuffer(create_info.byte_size, create_info.data);
-            m_uniform_buffers[create_info.name] = buffer_id;
-            break;
-        }
-        default: {
-            std::cerr << "Unhandled buffer type in switch statement" << std::endl;
-            break;
-        }
-    }
-}
 
 void OpenGLRHI::GetTextureOfRenderResult(uint64_t& texture_id) { texture_id = m_texture; }
 
 void OpenGLRHI::Tick() {
     auto scene = m_game_world_manager->GetCurrentActivateScene();
-
-    glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
-    glClearColor(0.0f, 0.0f, 1.0f, 0.5f);
-    glClear(GL_COLOR_BUFFER_BIT);
+    BeginFrame(scene->GetSceneCamera());
 
     {
-        auto view = scene->GetAllObjectWith<IndexDrawBufferComponent>();
+        auto view = scene->GetAllObjectWith<IndexDrawBufferComponent, TransformComponent>();
         for (auto entity : view) {
             const auto& draw_buffer_component = view.get<IndexDrawBufferComponent>(entity);
-            auto program_id = m_asset_manager->GetProgram("mesh");
-            glUseProgram(program_id);
             const auto& draw_buffers = draw_buffer_component.GetDrawBuffers();
+            {
+                const auto& transform_component = view.get<TransformComponent>(entity);
+                const auto& model_matrix = transform_component.GetModelMatrix();
+                glBindBuffer(GL_UNIFORM_BUFFER, m_camera_ubo);
+                glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), glm::value_ptr(model_matrix));
+                glBindBuffer(GL_UNIFORM_BUFFER, 0);
+            }
+            uint32_t program_id = m_asset_manager->GetProgram("mesh");
+            glUseProgram(program_id);
             for (const auto& draw_buffer : draw_buffers) {
                 glBindVertexArray(draw_buffer.vertex_array_id);
                 glDrawElements(draw_buffer.draw_mode, draw_buffer.index_count, draw_buffer.index_type,
                                (void*)draw_buffer.index_offset);
+                glBindVertexArray(0);
             }
+            glUseProgram(0);
         }
     }
 
-    {
-        auto view = scene->GetAllObjectWith<UniformBufferComponent>();
-        for (auto entity : view) {
-            const auto& uniform_component = view.get<UniformBufferComponent>(entity);
-            auto program_id = m_asset_manager->GetProgram("mesh");
-            MVP mvp = uniform_component.GetMVP();
-            OpenGLAPI::UploadMat4(program_id, "u_model", mvp.model);
-            OpenGLAPI::UploadMat4(program_id, "u_view", mvp.view);
-            OpenGLAPI::UploadMat4(program_id, "u_projection", mvp.projection);
-        }
-    }
-
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    EndFrame();
 }
+
+void OpenGLRHI::BeginFrame(Object& camera_object) {
+    auto& view_matrix = camera_object.GetComponent<CameraComponent>().GetCamera().GetViewMatrix();
+    auto& projection_matrix =
+        camera_object.GetComponent<CameraComponent>().GetCamera().GetPerspectiveProjectionMatrix();
+    // glm::mat4 view_matrix = glm::mat4(1.0f);
+    // glm::mat4 projection_matrix = glm::mat4(1.0f);
+    glBindBuffer(GL_UNIFORM_BUFFER, m_camera_ubo);
+    glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(view_matrix));
+    glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::mat4) * 2, sizeof(glm::mat4), glm::value_ptr(projection_matrix));
+    glBindBuffer(GL_UNIFORM_BUFFER, 0);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
+    // glClearColor(0.0f, 0.0f, 1.0f, 0.5f);
+    glClear(GL_COLOR_BUFFER_BIT);
+}
+void OpenGLRHI::EndFrame() { glBindFramebuffer(GL_FRAMEBUFFER, 0); }
 
 } // namespace RendererDemo

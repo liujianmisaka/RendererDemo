@@ -12,9 +12,11 @@ RuntimeContext::RuntimeContext() {
 }
 
 void RuntimeContext::StartSystem() {
-    m_game_world_manager->Initialize();
-
     m_window_system->Initialize();
+
+    GameWorldManagerInitInfo game_world_manager_init_info;
+    game_world_manager_init_info.m_window_system = m_window_system;
+    m_game_world_manager->Initialize(game_world_manager_init_info);
 
     RendererSystemInitInfo render_system_init_info;
     render_system_init_info.graphics_api = GraphicsAPI::OpenGL;

@@ -6,15 +6,20 @@ layout(location = 2) in vec3 tangents;
 layout(location = 3) in vec3 bitangents;
 layout(location = 4) in vec2 uvs;
 
-uniform mat4 u_view;
-uniform mat4 u_projection;
-uniform mat4 u_model;
+layout(std140, binding = 0) uniform MVP {
+    mat4 model;
+    mat4 view;
+    mat4 projection;
+}
+mvp;
 
 layout(location = 0) out vec4 o_color;
 
 void main() {
     o_color = vec4(0.2, 0.3, 0.5, 1.);
     vec4 position = vec4(position, 1.);
-    position = u_projection * u_view * u_model * position;
+    position = mvp.model * position;
+    position = mvp.view * position;
+    position = mvp.projection * position;
     gl_Position = vec4(position.x, position.y, position.z, 1.);
 }

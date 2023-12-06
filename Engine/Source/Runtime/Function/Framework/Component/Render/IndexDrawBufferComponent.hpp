@@ -23,7 +23,8 @@ public:
     IndexDrawBufferComponent(RHIShaderType shader_type) : m_shader_type(shader_type) {}
     virtual ~IndexDrawBufferComponent() = default;
 
-    void GenerateIndexDrawBuffer(const MeshComponent& mesh_component);
+    void GenerateIndexDrawBuffer(const MeshComponent& component);
+    void GenerateIndexDrawBuffer(const SquaComponent& component);
     const std::vector<RHIIndexDrawBuffer>& GetDrawBuffers() const { return m_draw_buffers; }
     RHIShaderType GetDrawType() { return m_shader_type; }
 

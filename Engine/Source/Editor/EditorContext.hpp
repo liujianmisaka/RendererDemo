@@ -16,9 +16,9 @@ public:
     void ShutdownEditorSystem();
 
 public:
-    std::unique_ptr<EditorDraw> m_editor_draw = nullptr;
-    std::unique_ptr<EditorEvent> m_editor_event = nullptr;
-    std::unique_ptr<EditorUI> m_editor_ui = nullptr;
+    std::shared_ptr<EditorDraw> m_editor_draw = nullptr;
+    std::shared_ptr<EditorEvent> m_editor_event = nullptr;
+    std::shared_ptr<EditorUI> m_editor_ui = nullptr;
     RendererDemo::MisakaEngine* m_runtime_engine = nullptr;
 };
 

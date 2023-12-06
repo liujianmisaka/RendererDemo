@@ -53,7 +53,8 @@ struct RHIVertexLayout {
 };
 
 enum class RHIShaderType : uint32_t {
-    KMesh
+    KTriangle,
+    KMesh,
 };
 
 struct RHIIndexDrawBuffer {

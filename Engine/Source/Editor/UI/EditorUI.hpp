@@ -4,6 +4,7 @@
 #include <memory>
 #include "Editor/UI/SceneHierarchyPanel.hpp"
 #include "Runtime/Function/Framework/Manager/GameWorldManager.hpp"
+#include "Runtime/Function/Framework/Object/Object.hpp"
 #include "Runtime/Function/Renderer/RenderSystem.hpp"
 #include "Runtime/Function/Window/WindowSystem.hpp"
 
@@ -23,6 +24,8 @@ public:
     void Initialize(EditorUIInitInfo init_info);
     void Clear();
     void Tick();
+
+    void SetCamera(const Object& camera_object) { m_camera_object = camera_object; }
 
 private:
     void UIInit();
@@ -50,6 +53,8 @@ private:
     std::shared_ptr<GameWorldManager> m_game_world_manager;
 
     SceneHierarchyPanel m_scene_hierarchy_panel;
+
+    Object m_camera_object;
 };
 
 } // namespace RendererDemo

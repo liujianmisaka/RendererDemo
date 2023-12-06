@@ -23,7 +23,7 @@ public:
     void SetRotation(const glm::vec3& rotation) { m_rotation = rotation; }
     void SetScale(const glm::vec3& scale) { m_scale = scale; }
 
-    glm::mat4 GetModelMatrix() { return m_model_matrix; }
+    const glm::mat4& GetModelMatrix() const { return m_model_matrix; }
 
 private:
     glm::vec3 m_position = glm::vec3(0.0f);

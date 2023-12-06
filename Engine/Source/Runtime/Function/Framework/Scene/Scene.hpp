@@ -5,14 +5,19 @@
 #include <memory>
 #include <string>
 #include "Runtime/Core/UUID/UUID.hpp"
+#include "Runtime/Function/Framework/Component/Camera/CameraComponent.hpp"
 #include "Runtime/Function/Framework/Object/Object.hpp"
-#include "Runtime/Function/Framework/Object/SceneCamera.hpp"
 
 namespace RendererDemo {
 
 class Scene {
 public:
-    Scene() = default;
+    Scene() {
+        m_registry = std::make_shared<entt::registry>();
+        m_scene_camera = CreateObject(UUID(), "Scene Camera");
+        m_scene_camera.AddComponent<CameraComponent>();
+    }
+
     ~Scene() = default;
 
     void Tick(float ts);
@@ -31,16 +36,13 @@ public:
         return m_registry->view<Components...>();
     }
 
-public:
-    // Functions about scene camera
-    SceneCamera CreateSceneCamera(UUID uuid = {}, std::string name = "SceneCamera");
-    SceneCamera& GetSceneCamera() { return m_scene_camera; }
+    // Functions about camera
+    Object& GetSceneCamera() { return m_scene_camera; }
 
 private:
-    std::shared_ptr<entt::registry> m_registry = std::make_shared<entt::registry>();
+    std::shared_ptr<entt::registry> m_registry = nullptr;
     Object m_selected_object{};
-
-    SceneCamera m_scene_camera = CreateSceneCamera();
+    Object m_scene_camera{};
 
     friend class SceneHierarchyPanel;
 };

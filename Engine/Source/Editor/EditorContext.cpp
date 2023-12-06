@@ -10,7 +10,11 @@ void EditorContext::StartEditorSystem(RendererDemo::MisakaEngine* runtime_engine
     m_editor_event = std::make_unique<EditorEvent>();
     m_editor_ui = std::make_unique<EditorUI>();
 
-    m_editor_draw->Initialize(runtime_context.m_renderer_system->GetRHI(), runtime_context.m_game_world_manager);
+    EditorDrawInitInfo editor_draw_init_info;
+    editor_draw_init_info.rhi = runtime_context.m_renderer_system->GetRHI();
+    editor_draw_init_info.game_world_manager = runtime_context.m_game_world_manager;
+    editor_draw_init_info.editor_ui = m_editor_ui;
+    m_editor_draw->Initialize(editor_draw_init_info);
 
     m_editor_event->Initialize(runtime_context.m_event_system);
 
