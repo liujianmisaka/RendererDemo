@@ -19,6 +19,8 @@ void EditorUI::Initialize(EditorUIInitInfo init_info) {
     m_renderer_system = init_info.renderer_system;
     m_game_world_manager = init_info.game_world_manager;
 
+    m_scene_hierarchy_panel.SetContext(m_game_world_manager->GetCurrentActivateScene());
+
     UIInit();
 }
 
@@ -123,6 +125,8 @@ void EditorUI::ImGuiRender() {
     RenderSettings();
     RenderViewport();
     m_scene_hierarchy_panel.OnImGuiRender();
+    m_asset_panel.OnImGuiRender();
+    m_log_panel.OnImGuiRender();
 
     ImGui::End();
 }
@@ -162,7 +166,7 @@ void EditorUI::RenderSettings() {
     m_camera.SetPosition(position);
 
     auto rotation = m_camera.GetRotation();
-    DrawVec3Control("Rotation", rotation);
+    DrawVec3Control("Rotation", rotation, glm::vec3(0.0f, -90.0f, 0.0f));
     m_camera.SetRotation(rotation);
 
     auto aspect_ratio = m_camera.GetAspectRatio();

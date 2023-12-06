@@ -2,6 +2,8 @@
 
 #include <memory>
 #include <imgui.h>
+#include "Editor/UI/AssetPanel.hpp"
+#include "Editor/UI/LogPanel.hpp"
 #include "Editor/UI/SceneHierarchyPanel.hpp"
 #include "Runtime/Function/Framework/Component/Camera/Camera.hpp"
 #include "Runtime/Function/Framework/Manager/GameWorldManager.hpp"
@@ -50,6 +52,8 @@ private:
     std::shared_ptr<GameWorldManager> m_game_world_manager;
 
     SceneHierarchyPanel m_scene_hierarchy_panel;
+    AssetPanel m_asset_panel;
+    LogPanel m_log_panel;
 
     Camera m_camera;
 

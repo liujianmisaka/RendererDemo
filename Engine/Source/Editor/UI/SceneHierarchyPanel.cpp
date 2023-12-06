@@ -64,7 +64,7 @@ void SceneHierarchyPanel::DrawComponentsofObject(Object object) {
         transform_component.SetPosition(position);
 
         auto scale = transform_component.GetScale();
-        DrawVec3Control("Scale", scale, 1.0f);
+        DrawVec3Control("Scale", scale, glm::vec3(1.0f));
         transform_component.SetScale(scale);
     }
 
