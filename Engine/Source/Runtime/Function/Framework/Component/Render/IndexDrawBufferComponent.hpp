@@ -2,11 +2,13 @@
 
 #include <glm/glm.hpp>
 #include "Runtime/Function/Framework/Component/Component.hpp"
+#include "Runtime/Function/Framework/Component/Mesh/RawMesh.hpp"
 #include "Runtime/Function/Renderer/RHI/RHIStruct.hpp"
 
 namespace RendererDemo {
 
 class MeshComponent;
+class SquaComponent;
 
 struct StaticMeshDataVertex {
     glm::vec3 position;
@@ -18,18 +20,17 @@ struct StaticMeshDataVertex {
 
 class IndexDrawBufferComponent : public Component {
 public:
-    // must have a program id
-    IndexDrawBufferComponent() = default;
-    IndexDrawBufferComponent(RHIShaderType shader_type) : m_shader_type(shader_type) {}
+    IndexDrawBufferComponent(std::shared_ptr<entt::registry> registry, entt::entity entity)
+        : Component(registry, entity) {}
     virtual ~IndexDrawBufferComponent() = default;
 
-    void GenerateIndexDrawBuffer(const MeshComponent& component);
-    void GenerateIndexDrawBuffer(const SquaComponent& component);
+    void GenerateIndexDrawBuffer(const RendererDemo::StaticMeshData& mesh_data);
+    void GenerateIndexDrawBuffer();
     const std::vector<RHIIndexDrawBuffer>& GetDrawBuffers() const { return m_draw_buffers; }
     RHIShaderType GetDrawType() { return m_shader_type; }
 
 private:
-    std::vector<StaticMeshDataVertex> GenerateVertexData(const MeshComponent& mesh_component);
+    std::vector<StaticMeshDataVertex> GenerateVertexData(const RendererDemo::StaticMeshData& mesh_data);
 
 private:
     std::vector<RHIIndexDrawBuffer> m_draw_buffers;

@@ -60,6 +60,8 @@ private:
     float m_aspect_ratio = 1.0f;
     float m_near_clip = 0.1f;
     float m_far_clip = 1000.0f;
+
+    friend class CameraComponent;
 };
 
 } // namespace RendererDemo

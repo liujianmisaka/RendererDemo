@@ -7,7 +7,7 @@
 #include "Runtime/Function/Framework/Component/Transform/TransformComponent.hpp"
 #include "Runtime/Function/Framework/Scene/Scene.hpp"
 #include "Runtime/Function/Framework/Object/Object.hpp"
-#include "Runtime/Function/Framework/Component/Component.hpp"
+#include "Runtime/Function/Framework/Component/MiniComponents.hpp"
 
 namespace RendererDemo {
 

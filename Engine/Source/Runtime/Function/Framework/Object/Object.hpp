@@ -14,7 +14,7 @@ public:
     Object(entt::entity entity, std::shared_ptr<entt::registry> entt_register);
     virtual ~Object() = default;
 
-    virtual void Tick(float ts) {}
+    virtual void Tick(float ts);
 
     explicit operator bool() const { return m_entity != entt::null; }
     explicit operator entt::entity() const { return m_entity; }
@@ -27,7 +27,7 @@ public:
     template <typename T, typename... Args>
     T& AddComponent(Args&&... args) {
         assert(!HasComponent<T>());
-        T& component = m_registry->emplace<T>(m_entity, std::forward<Args>(args)...);
+        T& component = m_registry->emplace<T>(m_entity, m_registry, m_entity, std::forward<Args>(args)...);
         this->OnComponentAdded<T>(*this, component);
         return component;
     }
@@ -37,14 +37,14 @@ public:
         if (HasComponent<T>()) {
             return GetComponent<T>();
         }
-        T& component = m_registry->emplace<T>(m_entity, std::forward<Args>(args)...);
+        T& component = m_registry->emplace<T>(m_entity, m_registry, m_entity, std::forward<Args>(args)...);
         this->OnComponentAdded<T>(*this, component);
         return component;
     }
 
     template <typename T, typename... Args>
     T& AddOrReplaceComponent(Args&&... args) {
-        T& component = m_registry->emplace_or_replace<T>(m_entity, std::forward<Args>(args)...);
+        T& component = m_registry->emplace_or_replace<T>(m_entity, m_registry, m_entity, std::forward<Args>(args)...);
         this->OnComponentAdded<T>(*this, component);
         return component;
     }

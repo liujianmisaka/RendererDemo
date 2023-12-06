@@ -9,8 +9,9 @@ namespace RendererDemo {
 
 class CameraComponent : public Component {
 public:
-    CameraComponent() = default;
+    CameraComponent(std::shared_ptr<entt::registry> registry, entt::entity entity) : Component(registry, entity) {}
     virtual ~CameraComponent() = default;
+    virtual void Tick(float ts) override;
 
     Camera& GetCamera() { return m_camera; }
     const Camera& GetCamera() const { return m_camera; }

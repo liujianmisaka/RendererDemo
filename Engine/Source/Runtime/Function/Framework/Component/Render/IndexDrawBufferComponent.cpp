@@ -1,18 +1,14 @@
 #include "Runtime/Function/Framework/Component/Render/IndexDrawBufferComponent.hpp"
 #include <cstdint>
 #include <vector>
-#include "Runtime/Function/Framework/Component/Component.hpp"
-#include "Runtime/Function/Framework/Component/Mesh/MeshComponent.hpp"
 #include "Runtime/Function/Renderer/RHI/OpenGL/OpenGLAPI.hpp"
 #include "Runtime/Function/Renderer/RHI/RHIPredefined.hpp"
 #include "Runtime/Function/Renderer/RHI/RHIStruct.hpp"
 
 namespace RendererDemo {
 
-void IndexDrawBufferComponent::GenerateIndexDrawBuffer(const MeshComponent& component) {
-    const RendererDemo::StaticMeshData& mesh_data = component.MeshData();
-
-    std::vector<StaticMeshDataVertex> vertices = GenerateVertexData(component);
+void IndexDrawBufferComponent::GenerateIndexDrawBuffer(const RendererDemo::StaticMeshData& mesh_data) {
+    std::vector<StaticMeshDataVertex> vertices = GenerateVertexData(mesh_data);
     const auto& index_buffer = mesh_data.index_buffer;
 
     uint32_t vertex_id = OpenGLAPI::CreateVertexBuffer(vertices.size() * sizeof(StaticMeshDataVertex), vertices.data());
@@ -33,7 +29,7 @@ void IndexDrawBufferComponent::GenerateIndexDrawBuffer(const MeshComponent& comp
     m_draw_buffers.emplace_back(draw_buffer);
 }
 
-void IndexDrawBufferComponent::GenerateIndexDrawBuffer(const SquaComponent& component) {
+void IndexDrawBufferComponent::GenerateIndexDrawBuffer() {
     const float vertices[] = {
         // four vertices
         -0.5f, -0.5f, 0.0f, // bottom left
@@ -79,8 +75,8 @@ void IndexDrawBufferComponent::GenerateIndexDrawBuffer(const SquaComponent& comp
     m_draw_buffers.emplace_back(draw_buffer);
 }
 
-std::vector<StaticMeshDataVertex> IndexDrawBufferComponent::GenerateVertexData(const MeshComponent& mesh_component) {
-    const RendererDemo::StaticMeshData& mesh_data = mesh_component.MeshData();
+std::vector<StaticMeshDataVertex> IndexDrawBufferComponent::GenerateVertexData(
+    const RendererDemo::StaticMeshData& mesh_data) {
     const RawVertexBuffer& vertex_buffer = mesh_data.vertex_buffer;
     std::vector<StaticMeshDataVertex> vertices(vertex_buffer.vertex_count);
     for (int i = 0; i < vertex_buffer.vertex_count; ++i) {

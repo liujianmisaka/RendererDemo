@@ -1,6 +1,7 @@
 #include "Editor/EditorDraw.hpp"
 #include <memory>
 #include <filesystem>
+#include "Runtime/Function/Framework/Component/MiniComponents.hpp"
 #include "Runtime/Function/Framework/Component/Transform/TransformComponent.hpp"
 #include "Runtime/Function/Renderer/RenderSystem.hpp"
 #include "Runtime/Function/Framework/FrameworkHeader.hpp"
@@ -27,7 +28,7 @@ void EditorDraw::InitDraw() {
     m_editor_ui->SetCamera(scene->GetSceneCamera());
 
     {
-        Object object = scene->CreateObject();
+        Object object = scene->AddObject();
         auto& squa_component = object.AddComponent<SquaComponent>();
         auto& transform_component = object.AddComponent<TransformComponent>();
         // auto& mesh_component = object.AddComponent<MeshComponent>();

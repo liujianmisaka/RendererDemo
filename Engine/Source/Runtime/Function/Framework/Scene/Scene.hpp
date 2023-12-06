@@ -14,7 +14,7 @@ class Scene {
 public:
     Scene() {
         m_registry = std::make_shared<entt::registry>();
-        m_scene_camera = CreateObject(UUID(), "Scene Camera");
+        m_scene_camera = AddObject();
         m_scene_camera.AddComponent<CameraComponent>();
     }
 
@@ -25,8 +25,8 @@ public:
     std::shared_ptr<entt::registry> GetRegister() { return m_registry; }
 
 public:
-    // Functions about object
-    Object CreateObject(UUID uuid = {}, std::string name = "Object");
+    // The Object does not have resource, while the entt::entity has. So it does not make sense to return Object&.
+    Object AddObject(UUID uuid = {}, std::string name = "Object");
     Object GetObject(entt::entity entity);
     Object& GetSelectedObject() { return m_selected_object; }
     void DestroyObject(Object object);

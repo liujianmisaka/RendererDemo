@@ -10,8 +10,9 @@ enum class ObjectState : uint32_t {
 
 class StateComponent : public Component {
 public:
-    StateComponent() = default;
-    StateComponent(ObjectState state) : m_state(static_cast<uint32_t>(state)) {}
+    StateComponent(std::shared_ptr<entt::registry> registry, entt::entity entity,
+                   ObjectState state = ObjectState::kNone)
+        : Component(registry, entity), m_state(static_cast<uint32_t>(state)) {}
     virtual ~StateComponent() = default;
 
     void SetState(ObjectState state) { m_state |= static_cast<uint32_t>(state); }

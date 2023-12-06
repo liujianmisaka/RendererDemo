@@ -10,8 +10,10 @@ namespace RendererDemo {
 
 class MeshComponent : public Component {
 public:
-    MeshComponent() = default;
+    MeshComponent(std::shared_ptr<entt::registry> registry, entt::entity entity) : Component(registry, entity) {}
     virtual ~MeshComponent() = default;
+
+	virtual void Tick(float ts) override;
 
     void LoadModel(std::string path);
 

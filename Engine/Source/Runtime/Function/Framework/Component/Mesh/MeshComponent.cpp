@@ -3,8 +3,19 @@
 #include <cstdint>
 #include <iostream>
 #include "Runtime/Function/Framework/Component/Mesh/RawMesh.hpp"
+#include "Runtime/Function/Framework/Component/Render/IndexDrawBufferComponent.hpp"
+#include "Runtime/Function/Framework/Component/State/StateComponent.hpp"
 
 namespace RendererDemo {
+
+void MeshComponent::Tick(float ts) {
+    auto state_component = ObjectGetComponent<StateComponent>();
+    if (!ObjectHasComponent<IndexDrawBufferComponent>() && ObjectGetComponent<StateComponent>().IsRendereable()) {
+        auto& draw_component = ObjectAddComponent<IndexDrawBufferComponent>();
+        auto& mesh_component = ObjectGetComponent<MeshComponent>();
+        draw_component.GenerateIndexDrawBuffer(mesh_component.MeshData());
+    }
+}
 
 void MeshComponent::LoadModel(std::string path) { LoadMesh(path); }
 
@@ -43,7 +54,7 @@ void MeshComponent::processMesh(aiMesh* mesh, const aiScene* scene) {
         vertex_buffes.positions.insert(vertex_buffes.positions.end(),
                                        {mesh->mVertices[i].x, mesh->mVertices[i].y, mesh->mVertices[i].z});
         vertex_buffes.normals.insert(vertex_buffes.normals.end(),
-                                       {mesh->mNormals[i].x, mesh->mNormals[i].y, mesh->mNormals[i].z});
+                                     {mesh->mNormals[i].x, mesh->mNormals[i].y, mesh->mNormals[i].z});
 
         if (mesh->mTextureCoords[0]) {
             vertex_buffes.uvs.insert(vertex_buffes.uvs.end(),
