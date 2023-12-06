@@ -9,21 +9,6 @@
 
 namespace RendererDemo {
 
-class RHIBuffer {
-public:
-    RHIBuffer() = default;
-    virtual ~RHIBuffer() = default;
-};
-class RHIShader {
-public:
-    RHIShader() = default;
-    virtual ~RHIShader() = default;
-};
-
-/* -------------------------------------------------------------------------- */
-/*                                   Old API                                  */
-/* -------------------------------------------------------------------------- */
-
 struct RHIBufferCreateInfo {
     const char* name;
     const void* data;          // 数据指针

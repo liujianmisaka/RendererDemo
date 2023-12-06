@@ -1,7 +1,7 @@
 #pragma once
 
-#include <cstdint>
 #include <memory>
+#include <imgui.h>
 #include "Editor/UI/SceneHierarchyPanel.hpp"
 #include "Runtime/Function/Framework/Manager/GameWorldManager.hpp"
 #include "Runtime/Function/Framework/Object/Object.hpp"
@@ -44,9 +44,7 @@ private:
     void SetFont();
 
 private:
-    uint64_t m_texture_id = 0;
-    int m_width = 0;
-    int m_height = 0;
+    ImVec2 m_viewport_size = ImVec2(0, 0);
 
     std::shared_ptr<WindowSystem> m_window_system;
     std::shared_ptr<RendererSystem> m_renderer_system;
@@ -55,6 +53,8 @@ private:
     SceneHierarchyPanel m_scene_hierarchy_panel;
 
     Object m_camera_object;
+
+    ImTextureID m_texture_id;
 };
 
 } // namespace RendererDemo

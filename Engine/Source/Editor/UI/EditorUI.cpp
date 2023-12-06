@@ -6,7 +6,6 @@
 #include <imgui_impl_opengl3.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include "Editor/UI/Utils.hpp"
 #include "Runtime/Function/Framework/Component/Camera/CameraComponent.hpp"
 #include "Runtime/Function/Renderer/RenderSystem.hpp"
 #include "Runtime/Function/Window/WindowSystem.hpp"
@@ -34,6 +33,7 @@ void EditorUI::Tick() {
     BeginFrame();
     ImGuiRender();
     EndFrame();
+    m_renderer_system->SetViewport(m_viewport_size.x, m_viewport_size.y);
 }
 
 void EditorUI::UIInit() {
@@ -56,14 +56,12 @@ void EditorUI::UIInit() {
     ImGui_ImplOpenGL3_Init("#version 410");
 
     // TODO: use editor context to get texture id
-    m_renderer_system->GetRHI()->GetTextureOfRenderResult(m_texture_id);
+    m_texture_id = m_renderer_system->GetImTextureID();
 
     m_scene_hierarchy_panel.SetContext(m_game_world_manager->GetCurrentActivateScene());
 }
 
 void EditorUI::Update() {
-    m_width = m_window_system->GetWidth();
-    m_height = m_window_system->GetHeight();
     m_scene_hierarchy_panel.SetContext(m_game_world_manager->GetCurrentActivateScene());
     SetCamera(m_game_world_manager->GetCurrentActivateScene()->GetSceneCamera());
 }
@@ -209,7 +207,8 @@ void EditorUI::RenderSettings() {
 void EditorUI::RenderViewport() {
     ImGui::Begin("Viewport", nullptr, ImGuiWindowFlags_NoTitleBar);
     ImVec2 availableSize = ImGui::GetContentRegionAvail();
-    ImGui::Image((void*)(intptr_t)m_texture_id, availableSize, ImVec2(0, 1), ImVec2(1, 0));
+    m_viewport_size = availableSize;
+    ImGui::Image(m_texture_id, availableSize, ImVec2(0, 1), ImVec2(1, 0));
     ImGui::End();
 }
 

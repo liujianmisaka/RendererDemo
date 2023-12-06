@@ -24,7 +24,7 @@ constexpr RHIElementInfo KColorAttribute = {
 const std::unordered_map<RHIElementType, RHIElementInfo> KPredefinedVertexAttributeMap = {
     {RHIElementType::Position, KPositionAttribute}, {RHIElementType::Color, KColorAttribute}};
 
-const RHIVertexLayout KSiampleVertexLayout = {
+const RHIVertexLayout KSampleVertexLayout = {
     .attributes =
         {
             {

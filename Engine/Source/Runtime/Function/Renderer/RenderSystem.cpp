@@ -2,7 +2,6 @@
 #include <memory>
 #include <stdexcept>
 
-#include "Runtime/Function/Renderer/RHI/RHI.hpp"
 #include "Runtime/Function/Renderer/RHI/OpenGL/OpenGLRHI.hpp"
 
 namespace RendererDemo {
@@ -19,6 +18,14 @@ void RendererSystem::Initialize(RendererSystemInitInfo render_system_init_info) 
 void RendererSystem::Clear(){};
 
 void RendererSystem::Tick(float ts) { m_rhi->Tick(); }
+
+ImTextureID RendererSystem::GetImTextureID() {
+    ImTextureID texture_id;
+    m_rhi->GetImTextureID(texture_id);
+    return texture_id;
+}
+
+void RendererSystem::SetViewport(int width, int height) { m_rhi->SetViewport(width, height); }
 
 /* -------------------------------------------------------------------------- */
 /*                                private apis                                */

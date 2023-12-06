@@ -30,23 +30,10 @@ void OpenGLRHI::Initialize(RHIInitInfo rhi_init_info) {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-    glDisable(GL_CULL_FACE);
-    glEnable(GL_DEPTH_TEST);
+    // glDisable(GL_CULL_FACE);
+    // glEnable(GL_DEPTH_TEST);
 
-    // 创建一个帧缓冲对象（FBO）和一个纹理
-    glGenFramebuffers(1, &m_fbo);
-    glGenTextures(1, &m_texture);
-    glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
-    glBindTexture(GL_TEXTURE_2D, m_texture);
-
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_window_system->GetWidth(), m_window_system->GetHeight(), 0, GL_RGBA,
-                 GL_UNSIGNED_BYTE, NULL);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_texture, 0);
-
-    glBindTexture(GL_TEXTURE_2D, 0);
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    CreateImageTextureForImGui();
 
     // create camera ubo
     glGenBuffers(1, &m_camera_ubo);
@@ -58,7 +45,12 @@ void OpenGLRHI::Initialize(RHIInitInfo rhi_init_info) {
 
 void OpenGLRHI::Clear() {}
 
-void OpenGLRHI::GetTextureOfRenderResult(uint64_t& texture_id) { texture_id = m_texture; }
+void OpenGLRHI::GetImTextureID(ImTextureID& texture_id) { texture_id = (ImTextureID)(uint64_t)m_texture2d; }
+
+void OpenGLRHI::SetViewport(int width, int height) {
+    glViewport(0, 0, width, height);
+    m_texture2d.TexImage2D(width, height);
+}
 
 void OpenGLRHI::Tick() {
     auto scene = m_game_world_manager->GetCurrentActivateScene();
@@ -102,10 +94,24 @@ void OpenGLRHI::BeginFrame(Object& camera_object) {
     glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::mat4) * 2, sizeof(glm::mat4), glm::value_ptr(projection_matrix));
     glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
-    glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
+    // glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     // glClearColor(0.0f, 0.0f, 1.0f, 0.5f);
-    glClear(GL_COLOR_BUFFER_BIT);
+    m_frame_buffer.Clear();
 }
-void OpenGLRHI::EndFrame() { glBindFramebuffer(GL_FRAMEBUFFER, 0); }
+void OpenGLRHI::EndFrame() { m_frame_buffer.UnBind(); }
+
+void OpenGLRHI::CreateImageTextureForImGui() {
+    m_frame_buffer.Create();
+    m_texture2d.Create();
+    m_sampler.Create();
+
+    m_texture2d.TexImage2D(m_window_system->GetWidth(), m_window_system->GetHeight());
+    // m_sampler.Bind((uint32_t)m_texture2d);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); // TODO: use sampler
+    m_frame_buffer.BindTexture2D((uint32_t)m_texture2d);
+
+    m_texture2d.UnBind();
+    m_frame_buffer.UnBind();
+}
 
 } // namespace RendererDemo
