@@ -6,7 +6,7 @@
 
 #include <vector>
 
-#include "Runtime/Function/Framework/Object/Object.hpp"
+#include "Runtime/Function/Framework/Component/Camera/Camera.hpp"
 #include "Runtime/Function/Renderer/RHI/OpenGL/OpenGLClass/OpenGLSampler.hpp"
 #include "Runtime/Function/Renderer/RHI/OpenGL/OpenGLClass/OpenGLTexture.hpp"
 #include "Runtime/Function/Renderer/RHI/OpenGL/OpenGLClass/OpenGLFramebuffer.hpp"
@@ -34,7 +34,7 @@ public:
     virtual void SetViewport(int width, int height) override;
 
 private:
-    void BeginFrame(Object& camera_object);
+    void BeginFrame(Camera& camera);
     void EndFrame();
 
     void CreateImageTextureForImGui();

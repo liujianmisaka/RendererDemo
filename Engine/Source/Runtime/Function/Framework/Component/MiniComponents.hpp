@@ -25,6 +25,7 @@ public:
     virtual ~TagComponent() = default;
     TagComponent(const TagComponent &) = default;
 
+    void SetTag(std::string tag) { m_Tag = tag; }
     std::string GetTag() { return m_Tag; }
 
 private:
@@ -41,7 +42,7 @@ public:
         auto state_component = ObjectGetComponent<StateComponent>();
         if (!ObjectHasComponent<IndexDrawBufferComponent>() && ObjectGetComponent<StateComponent>().IsRendereable()) {
             auto &draw_component = ObjectAddComponent<IndexDrawBufferComponent>();
-            draw_component.GenerateIndexDrawBuffer();   // Use default vertex data
+            draw_component.GenerateIndexDrawBuffer(); // Use default vertex data
         }
     }
 

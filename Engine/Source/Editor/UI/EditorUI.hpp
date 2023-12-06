@@ -3,8 +3,8 @@
 #include <memory>
 #include <imgui.h>
 #include "Editor/UI/SceneHierarchyPanel.hpp"
+#include "Runtime/Function/Framework/Component/Camera/Camera.hpp"
 #include "Runtime/Function/Framework/Manager/GameWorldManager.hpp"
-#include "Runtime/Function/Framework/Object/Object.hpp"
 #include "Runtime/Function/Renderer/RenderSystem.hpp"
 #include "Runtime/Function/Window/WindowSystem.hpp"
 
@@ -25,7 +25,7 @@ public:
     void Clear();
     void Tick();
 
-    void SetCamera(const Object& camera_object) { m_camera_object = camera_object; }
+    void SetCamera(const Camera& camera) { m_camera = camera; }
 
 private:
     void UIInit();
@@ -38,7 +38,6 @@ private:
     void RenderMenuBar();
     void RenderSettings();
     void RenderViewport();
-    void RenderStatus();
 
     void SetDarkThemeColors();
     void SetFont();
@@ -52,7 +51,7 @@ private:
 
     SceneHierarchyPanel m_scene_hierarchy_panel;
 
-    Object m_camera_object;
+    Camera m_camera;
 
     ImTextureID m_texture_id;
 };

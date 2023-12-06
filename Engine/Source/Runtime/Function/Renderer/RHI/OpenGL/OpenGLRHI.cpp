@@ -8,7 +8,7 @@
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
 
-#include "Runtime/Function/Framework/Component/Camera/CameraComponent.hpp"
+#include "Runtime/Function/Framework/Component/Camera/Camera.hpp"
 #include "Runtime/Function/Framework/Component/Render/IndexDrawBufferComponent.hpp"
 #include "Runtime/Function/Framework/Component/Transform/TransformComponent.hpp"
 #include "Runtime/Function/Framework/FrameworkHeader.hpp"
@@ -54,7 +54,7 @@ void OpenGLRHI::SetViewport(int width, int height) {
 
 void OpenGLRHI::Tick() {
     auto scene = m_game_world_manager->GetCurrentActivateScene();
-    BeginFrame(scene->GetSceneCamera());
+    BeginFrame(scene->GetRenderCamera());
 
     {
         auto view = scene->GetAllObjectWith<IndexDrawBufferComponent, TransformComponent>();
@@ -83,12 +83,9 @@ void OpenGLRHI::Tick() {
     EndFrame();
 }
 
-void OpenGLRHI::BeginFrame(Object& camera_object) {
-    auto& view_matrix = camera_object.GetComponent<CameraComponent>().GetCamera().GetViewMatrix();
-    auto& projection_matrix =
-        camera_object.GetComponent<CameraComponent>().GetCamera().GetPerspectiveProjectionMatrix();
-    // glm::mat4 view_matrix = glm::mat4(1.0f);
-    // glm::mat4 projection_matrix = glm::mat4(1.0f);
+void OpenGLRHI::BeginFrame(Camera& camera) {
+    auto& view_matrix = camera.GetViewMatrix();
+    auto& projection_matrix = camera.GetPerspectiveProjectionMatrix();
     glBindBuffer(GL_UNIFORM_BUFFER, m_camera_ubo);
     glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(view_matrix));
     glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::mat4) * 2, sizeof(glm::mat4), glm::value_ptr(projection_matrix));

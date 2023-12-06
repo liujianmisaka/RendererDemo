@@ -18,6 +18,7 @@ find_package(imgui CONFIG REQUIRED)
 find_package(EnTT CONFIG REQUIRED)
 find_package(VulkanHeaders CONFIG)
 find_package(assimp CONFIG REQUIRED)
+find_package(yaml-cpp CONFIG REQUIRED)
 
 file(
 GLOB_RECURSE RendererDemo_SRC 
@@ -37,6 +38,7 @@ PRIVATE
 	EnTT::EnTT
 	Vulkan::Headers
 	assimp::assimp
+	yaml-cpp::yaml-cpp
 )
 
 target_include_directories(RendererDemo PRIVATE Engine/Source)

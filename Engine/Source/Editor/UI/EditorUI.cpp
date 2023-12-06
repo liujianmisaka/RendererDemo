@@ -6,7 +6,7 @@
 #include <imgui_impl_opengl3.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include "Runtime/Function/Framework/Component/Camera/CameraComponent.hpp"
+#include "Editor/UI/Utils.hpp"
 #include "Runtime/Function/Renderer/RenderSystem.hpp"
 #include "Runtime/Function/Window/WindowSystem.hpp"
 #include "Runtime/Function/Renderer/RHI/RHI.hpp"
@@ -34,6 +34,8 @@ void EditorUI::Tick() {
     ImGuiRender();
     EndFrame();
     m_renderer_system->SetViewport(m_viewport_size.x, m_viewport_size.y);
+    m_camera.SetAspectRatio(m_viewport_size.x / m_viewport_size.y);
+    m_game_world_manager->GetCurrentActivateScene()->SetRenderCamera(m_camera);
 }
 
 void EditorUI::UIInit() {
@@ -63,7 +65,7 @@ void EditorUI::UIInit() {
 
 void EditorUI::Update() {
     m_scene_hierarchy_panel.SetContext(m_game_world_manager->GetCurrentActivateScene());
-    SetCamera(m_game_world_manager->GetCurrentActivateScene()->GetSceneCamera());
+    SetCamera(m_game_world_manager->GetCurrentActivateScene()->GetRenderCamera());
 }
 
 void EditorUI::BeginFrame() {
@@ -119,7 +121,6 @@ void EditorUI::ImGuiRender() {
 
     RenderMenuBar();
     RenderSettings();
-    RenderStatus();
     RenderViewport();
     m_scene_hierarchy_panel.OnImGuiRender();
 
@@ -152,54 +153,53 @@ void EditorUI::RenderMenuBar() {
 }
 
 void EditorUI::RenderSettings() {
-    ImGui::Begin("setting");
-    auto& camera = m_camera_object.GetComponent<CameraComponent>().GetCamera();
+    ImGui::Begin("editor setting");
+    ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate,
+                ImGui::GetIO().Framerate);
+    ImGui::Separator();
+    auto position = m_camera.GetPosition();
+    DrawVec3Control("Position", position);
+    m_camera.SetPosition(position);
 
-    auto position = camera.GetPosition();
-    if (ImGui::DragFloat3("Position", glm::value_ptr(position))) {
-        camera.SetPosition(position);
-    }
+    auto rotation = m_camera.GetRotation();
+    DrawVec3Control("Rotation", rotation);
+    m_camera.SetRotation(rotation);
 
-    auto rotation = camera.GetRotation();
-    if (ImGui::DragFloat3("Rotation", glm::value_ptr(rotation))) {
-        camera.SetRotation(rotation);
-    }
-
-    auto aspect_ratio = camera.GetAspectRatio();
+    auto aspect_ratio = m_camera.GetAspectRatio();
     if (ImGui::DragFloat("Aspect Ratio", &aspect_ratio)) {
-        camera.SetAspectRatio(aspect_ratio);
+        m_camera.SetAspectRatio(aspect_ratio);
     }
 
-    auto fov = camera.GetFov();
+    auto fov = m_camera.GetFov();
     if (ImGui::DragFloat("Perspective FOV", &fov)) {
-        camera.SetFov(fov);
+        m_camera.SetFov(fov);
     }
-    auto near = camera.GetNearClip();
+    auto near = m_camera.GetNearClip();
     if (ImGui::DragFloat("Perspective Near", &near)) {
-        camera.SetNearClip(near);
+        m_camera.SetNearClip(near);
     }
-    auto far = camera.GetFarClip();
+    auto far = m_camera.GetFarClip();
     if (ImGui::DragFloat("Perspective Far", &far)) {
-        camera.SetFarClip(far);
+        m_camera.SetFarClip(far);
     }
 
-    auto view_matrix = camera.GetViewMatrix();
-    ImGui::Text("View Matrix");
-    ImGui::Text("%f %f %f %f", view_matrix[0][0], view_matrix[0][1], view_matrix[0][2], view_matrix[0][3]);
-    ImGui::Text("%f %f %f %f", view_matrix[1][0], view_matrix[1][1], view_matrix[1][2], view_matrix[1][3]);
-    ImGui::Text("%f %f %f %f", view_matrix[2][0], view_matrix[2][1], view_matrix[2][2], view_matrix[2][3]);
-    ImGui::Text("%f %f %f %f", view_matrix[3][0], view_matrix[3][1], view_matrix[3][2], view_matrix[3][3]);
+    // auto view_matrix = camera.GetViewMatrix();
+    // ImGui::Text("View Matrix");
+    // ImGui::Text("%f %f %f %f", view_matrix[0][0], view_matrix[0][1], view_matrix[0][2], view_matrix[0][3]);
+    // ImGui::Text("%f %f %f %f", view_matrix[1][0], view_matrix[1][1], view_matrix[1][2], view_matrix[1][3]);
+    // ImGui::Text("%f %f %f %f", view_matrix[2][0], view_matrix[2][1], view_matrix[2][2], view_matrix[2][3]);
+    // ImGui::Text("%f %f %f %f", view_matrix[3][0], view_matrix[3][1], view_matrix[3][2], view_matrix[3][3]);
 
-    auto projection_matrix = camera.GetPerspectiveProjectionMatrix();
-    ImGui::Text("Projection Matrix");
-    ImGui::Text("%f %f %f %f", projection_matrix[0][0], projection_matrix[0][1], projection_matrix[0][2],
-                projection_matrix[0][3]);
-    ImGui::Text("%f %f %f %f", projection_matrix[1][0], projection_matrix[1][1], projection_matrix[1][2],
-                projection_matrix[1][3]);
-    ImGui::Text("%f %f %f %f", projection_matrix[2][0], projection_matrix[2][1], projection_matrix[2][2],
-                projection_matrix[2][3]);
-    ImGui::Text("%f %f %f %f", projection_matrix[3][0], projection_matrix[3][1], projection_matrix[3][2],
-                projection_matrix[3][3]);
+    // auto projection_matrix = camera.GetPerspectiveProjectionMatrix();
+    // ImGui::Text("Projection Matrix");
+    // ImGui::Text("%f %f %f %f", projection_matrix[0][0], projection_matrix[0][1], projection_matrix[0][2],
+    //             projection_matrix[0][3]);
+    // ImGui::Text("%f %f %f %f", projection_matrix[1][0], projection_matrix[1][1], projection_matrix[1][2],
+    //             projection_matrix[1][3]);
+    // ImGui::Text("%f %f %f %f", projection_matrix[2][0], projection_matrix[2][1], projection_matrix[2][2],
+    //             projection_matrix[2][3]);
+    // ImGui::Text("%f %f %f %f", projection_matrix[3][0], projection_matrix[3][1], projection_matrix[3][2],
+    //             projection_matrix[3][3]);
 
     ImGui::End();
 }
@@ -209,12 +209,6 @@ void EditorUI::RenderViewport() {
     ImVec2 availableSize = ImGui::GetContentRegionAvail();
     m_viewport_size = availableSize;
     ImGui::Image(m_texture_id, availableSize, ImVec2(0, 1), ImVec2(1, 0));
-    ImGui::End();
-}
-
-void EditorUI::RenderStatus() {
-    ImGui::Begin("status");
-    ImGui::Text("status");
     ImGui::End();
 }
 

@@ -3,6 +3,7 @@
 #include <filesystem>
 #include "Runtime/Function/Framework/Component/MiniComponents.hpp"
 #include "Runtime/Function/Framework/Component/Transform/TransformComponent.hpp"
+#include "Runtime/Function/Framework/Object/Object.hpp"
 #include "Runtime/Function/Renderer/RenderSystem.hpp"
 #include "Runtime/Function/Framework/FrameworkHeader.hpp"
 
@@ -25,10 +26,13 @@ void EditorDraw::InitDraw() {
 
     std::shared_ptr<Scene> scene = m_game_world_manager->GetCurrentActivateScene();
 
-    m_editor_ui->SetCamera(scene->GetSceneCamera());
+    {
+        Object object = scene->AddObject("Main Camera");
+        auto& camera_component = object.AddComponent<CameraComponent>();
+    }
 
     {
-        Object object = scene->AddObject();
+        Object object = scene->AddObject("Squa");
         auto& squa_component = object.AddComponent<SquaComponent>();
         auto& transform_component = object.AddComponent<TransformComponent>();
         // auto& mesh_component = object.AddComponent<MeshComponent>();
