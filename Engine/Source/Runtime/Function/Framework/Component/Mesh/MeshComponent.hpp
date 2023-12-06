@@ -1,6 +1,5 @@
 #pragma once
 
-#include <vector>
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 
@@ -16,7 +15,7 @@ public:
 
     void LoadModel(std::string path);
 
-    const std::vector<MeshData>& MeshData() { return m_mesh_data; }
+    const RendererDemo::StaticMeshData& MeshData() const { return m_mesh_data; }
 
 private:
     void LoadMesh(std::string path);
@@ -24,7 +23,8 @@ private:
     void processMesh(aiMesh* mesh, const aiScene* scene);
 
 private:
-    std::vector<RendererDemo::MeshData> m_mesh_data{};
+    RendererDemo::StaticMeshData m_mesh_data;
+    // std::vector<RendererDemo::StaticMeshData> m_mesh_data{};
 };
 
 } // namespace RendererDemo

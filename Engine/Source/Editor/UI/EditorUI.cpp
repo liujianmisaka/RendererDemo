@@ -5,7 +5,7 @@
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
 #include <glm/glm.hpp>
-#include "Runtime/RuntimeContext.hpp"
+#include "Runtime/Function/Framework/Component/Transform/TransformComponent.hpp"
 #include "Runtime/Function/Renderer/RenderSystem.hpp"
 #include "Runtime/Function/Window/WindowSystem.hpp"
 #include "Runtime/Function/Renderer/RHI/RHI.hpp"
@@ -22,7 +22,7 @@ static void DrawVec3Control(const std::string& label, glm::vec3& values, float r
     ImGui::Columns(2);
     ImGui::SetColumnWidth(0, columnWidth);
 
-    ImGui::Text(label.c_str());
+    ImGui::TextUnformatted(label.c_str());
     ImGui::NextColumn();
 
     ImGui::PushMultiItemsWidths(3, ImGui::CalcItemWidth());
@@ -75,29 +75,12 @@ static void DrawVec3Control(const std::string& label, glm::vec3& values, float r
     ImGui::PopID();
 }
 
-void EditorUI::Initialize() {
-    // Setup Dear ImGui context
-    IMGUI_CHECKVERSION();
-    ImGui::CreateContext();
+void EditorUI::Initialize(EditorUIInitInfo init_info) {
+    m_window_system = init_info.window_system;
+    m_renderer_system = init_info.renderer_system;
+    m_game_world_manager = init_info.game_world_manager;
 
-    // Setup Dear ImGui style
-    ImGuiIO& io = ImGui::GetIO();
-    (void)io;
-    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
-
-    // Setup Dear ImGui style
-    SetDarkThemeColors();
-    SetFont();
-
-    // Init imgui docking
-    GLFWwindow* window = g_runtime_context.m_window_system->GetNativeWindow();
-    ImGui_ImplGlfw_InitForOpenGL(window, true);
-    ImGui_ImplOpenGL3_Init("#version 410");
-
-    // TODO: use editor context to get texture id
-    g_runtime_context.m_renderer_system->GetRHI()->GetTextureOfRenderResult(m_texture_id);
-
-    m_scene_hierarchy_panel.SetContext(g_runtime_context.m_game_world_manager->GetCurrentActivateScene());
+    UIInit();
 }
 
 void EditorUI::Clear() {
@@ -113,9 +96,35 @@ void EditorUI::Tick() {
     EndFrame();
 }
 
+void EditorUI::UIInit() {
+    // Setup Dear ImGui context
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+
+    // Setup Dear ImGui style
+    ImGuiIO& io = ImGui::GetIO();
+    (void)io;
+    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+
+    // Setup Dear ImGui style
+    SetDarkThemeColors();
+    SetFont();
+
+    // Init imgui docking
+    GLFWwindow* window = m_window_system->GetNativeWindow();
+    ImGui_ImplGlfw_InitForOpenGL(window, true);
+    ImGui_ImplOpenGL3_Init("#version 410");
+
+    // TODO: use editor context to get texture id
+    m_renderer_system->GetRHI()->GetTextureOfRenderResult(m_texture_id);
+
+    m_scene_hierarchy_panel.SetContext(m_game_world_manager->GetCurrentActivateScene());
+}
+
 void EditorUI::Update() {
-    m_width = g_runtime_context.m_window_system->GetWidth();
-    m_height = g_runtime_context.m_window_system->GetHeight();
+    m_width = m_window_system->GetWidth();
+    m_height = m_window_system->GetHeight();
+    m_scene_hierarchy_panel.SetContext(m_game_world_manager->GetCurrentActivateScene());
 }
 
 void EditorUI::BeginFrame() {
@@ -205,9 +214,17 @@ void EditorUI::RenderMenuBar() {
 
 void EditorUI::RenderSettings() {
     ImGui::Begin("setting");
-    auto scene = g_runtime_context.m_game_world_manager->GetCurrentActivateScene();
-    auto& rotation = scene->GetRotation();
-    DrawVec3Control("Rotation", rotation);
+    auto scene = m_game_world_manager->GetCurrentActivateScene();
+    auto& transform_component = scene->GetSelectedObject().GetComponent<TransformComponent>();
+    auto roation = transform_component.GetRotation();
+    auto position = transform_component.GetPosition();
+    auto scale = transform_component.GetScale();
+    DrawVec3Control("Rotation", roation);
+    DrawVec3Control("Position", position);
+    DrawVec3Control("Scale", scale, 1.0f);
+    transform_component.SetRotation(roation);
+    transform_component.SetPosition(position);
+    transform_component.SetScale(scale);
     ImGui::End();
 }
 
@@ -257,8 +274,8 @@ void EditorUI::SetDarkThemeColors() {
 
 void EditorUI::SetFont() {
     ImGuiIO& io = ImGui::GetIO();
-    io.Fonts->AddFontFromFileTTF("Asset/fonts/opensans/OpenSans-Bold.ttf", 30.0f);
-    io.FontDefault = io.Fonts->AddFontFromFileTTF("Asset/fonts/opensans/OpenSans-Regular.ttf", 30.0f);
+    io.Fonts->AddFontFromFileTTF("Asset/fonts/opensans/OpenSans-Bold.ttf", 25.0f);
+    io.FontDefault = io.Fonts->AddFontFromFileTTF("Asset/fonts/opensans/OpenSans-Regular.ttf", 25.0f);
 }
 
 } // namespace RendererDemo

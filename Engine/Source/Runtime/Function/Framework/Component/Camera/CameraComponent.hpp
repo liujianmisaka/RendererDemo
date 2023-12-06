@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Runtime/Function/Framework/Component/Component.hpp"
+#include <glm/fwd.hpp>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -19,58 +20,37 @@ public:
     CameraComponent(float fov, float aspectRatio, float nearClip, float farClip);
     virtual ~CameraComponent() = default;
 
-    glm::mat4 GetViewProjection() { return m_projection_matrix * m_view_matrix; }
+    // Setter and Getter
+    void SetFov(float fov) { m_fov = fov; }
+    void SetAspectRatio(float aspect_ratio) { m_aspect_ratio = aspect_ratio; }
+    void SetNearClip(float near_clip) { m_near_clip = near_clip; }
+    void SetFarClip(float far_clip) { m_far_clip = far_clip; }
+    const float GetFov() const { return m_fov; }
+    const float GetAspectRatio() const { return m_aspect_ratio; }
+    const float GetNearClip() const { return m_near_clip; }
+    const float GetFarClip() const { return m_far_clip; }
 
-    glm::mat4 GetViewMatrix() { return m_view_matrix; }
-
-    glm::mat4 GetProjectionMatrix() { return m_projection_matrix; }
-
-    glm::vec3 GetPosition() { return m_position; }
-
-    glm::vec3 GetForward() { return m_forward; }
-
-    glm::vec3 GetUp() { return m_up; }
-
-    void SetPosition(const glm::vec3& position) {
-        m_position = position;
-        UpdateViewMatrix();
-    }
-
-    void SetForward(const glm::vec3& forward) {
-        m_forward = forward;
-        UpdateViewMatrix();
-    }
-
-    void SetUp(const glm::vec3& up) {
-        m_up = up;
-        UpdateViewMatrix();
-    }
-
-    void SetCameraMod(CameraMod cameraMod) { m_camera_mod = cameraMod; }
-
-    CameraMod GetCameraMod() { return m_camera_mod; }
-
-    void Tick(float ts);
+    void SetPosition(const glm::vec3& position) { m_position = position; }
+    void SetForward(const glm::vec3& forward) { m_forward = forward; }
+    void SetUp(const glm::vec3& up) { m_up = up; }
+    void SetCameraMod(CameraMod camera_mod) { m_camera_mod = camera_mod; }
+    const glm::vec3& GetPosition() const { return m_position; }
+    const glm::vec3& GetForward() const { return m_forward; }
+    const glm::vec3& GetUp() const { return m_up; }
+    CameraMod GetCameraMod() const { return m_camera_mod; }
 
 private:
-    void UpdateViewMatrix();
-    void UpdateProjectionMatrix();
-
-private:
-    // Original Camrea Parameter
+    // Init Camrea Parameters
     float m_fov{45.0f};         // Field of View
     float m_aspect_ratio{1.0f}; // height / width
     float m_near_clip{0.1f};
     float m_far_clip{100.0f};
+
+    // Camera State Parameters
     glm::vec3 m_position{0.0f, 0.0f, 0.0f};
     glm::vec3 m_up{0.0f, 1.0f, 0.0f};
     glm::vec3 m_forward{0.0f, 0.0f, -1.0f};
-
     CameraMod m_camera_mod = CameraMod::Free;
-
-    // Generated Parameter
-    glm::mat4 m_view_matrix;
-    glm::mat4 m_projection_matrix;
 };
 
 } // namespace RendererDemo

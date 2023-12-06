@@ -1,25 +1,17 @@
 #include "Runtime/RuntimeContext.hpp"
 
-#include <memory>
-#include "Runtime/Core/Log/LogSystem.hpp"
-#include "Runtime/Function/Framework/Manager/GameWorldManager.hpp"
-#include "Runtime/Function/Renderer/RenderSystem.hpp"
-#include "Runtime/Function/Window/WindowSystem.hpp"
-#include "Runtime/Function/event/EventSystem.hpp"
-#include "Runtime/Resource/Manager/AssetManager.hpp"
-
 namespace RendererDemo {
 
-RuntimeContext g_runtime_context;
-
-void RuntimeContext::StartSystem() {
+RuntimeContext::RuntimeContext() {
     m_log_system = std::make_shared<LogSystem>();
     m_game_world_manager = std::make_shared<GameWorldManager>();
     m_window_system = std::make_shared<WindowSystem>();
     m_renderer_system = std::make_shared<RendererSystem>();
     m_event_system = std::make_shared<EventSystem>();
     m_asset_manager = std::make_shared<AssetManager>();
+}
 
+void RuntimeContext::StartSystem() {
     m_game_world_manager->Initialize();
 
     m_window_system->Initialize();

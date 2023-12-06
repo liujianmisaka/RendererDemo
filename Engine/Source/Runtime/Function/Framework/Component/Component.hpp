@@ -10,11 +10,7 @@ public:
     Component() = default;
     virtual ~Component() = default;
 
-    void Refresh(bool flag) { m_flag = flag; }
-    bool Refresh() { return m_flag; }
-
-private:
-    bool m_flag = true;
+    virtual void Tick(float ts) {}
 };
 
 class IdComponent : public Component {

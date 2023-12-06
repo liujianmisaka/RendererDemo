@@ -32,6 +32,8 @@ public:
     void Initialize(int width = 1280, int height = 960, const std::string& title = "Misaka Engine");
     void Clear();
 
+    void Tick();
+
     bool ShouldClose() const;
     void PollEvents() const;
     void SwapBuffers() const;

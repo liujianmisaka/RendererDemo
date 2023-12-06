@@ -1,17 +1,9 @@
 #pragma once
 
-#include <memory>
 #include <glm/glm.hpp>
-#include "Editor/EditorDraw.hpp"
-#include "Editor/EditorEvent.hpp"
-#include "Editor/UI/EditorUI.hpp"
+#include "Editor/EditorContext.hpp"
 
 namespace RendererDemo {
-
-class EditorDraw;
-class EditorEvent;
-
-class MisakaEngine;
 
 class MisakaEditor {
 public:
@@ -21,10 +13,7 @@ public:
     void Run();
 
 private:
-    RendererDemo::MisakaEngine* m_runtime_engine = nullptr;
-    std::unique_ptr<EditorDraw> m_editor_draw = nullptr;
-    std::unique_ptr<EditorEvent> m_editor_event = nullptr;
-    std::unique_ptr<EditorUI> m_editor_ui = nullptr;
+    EditorContext m_editor_context;
 };
 
 } // namespace RendererDemo

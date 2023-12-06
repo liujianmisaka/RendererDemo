@@ -1,5 +1,4 @@
 #include "Runtime/Function/Renderer/RHI/OpenGL/OpenGLRHI.hpp"
-#include <cassert>
 #include <cstdint>
 #include <iostream>
 #include <memory>
@@ -8,10 +7,9 @@
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
 
-#include "Runtime/Function/Framework/Component/Component.hpp"
-#include "Runtime/Function/Framework/Component/Mesh/MeshComponent.hpp"
+#include "Runtime/Function/Framework/Component/Render/IndexDrawBufferComponent.hpp"
+#include "Runtime/Function/Framework/Component/Render/UniformBufferComponent.hpp"
 #include "Runtime/Function/Framework/FrameworkHeader.hpp"
-#include "Runtime/Function/Renderer/RHI/RHIPredefined.hpp"
 #include "Runtime/Function/Renderer/RHI/OpenGL/OpenGLAPI.hpp"
 #include "Runtime/Resource/Manager/AssetManager.hpp"
 
@@ -76,91 +74,42 @@ void OpenGLRHI::CreateBuffer(RHIBufferCreateInfo create_info) {
     }
 }
 
-std::vector<RHIIndexDrawBuffer> OpenGLRHI::RenderMesh(std::vector<MeshData> meshs_data) {
-    std::vector<RHIIndexDrawBuffer> draw_buffers;
-    uint32_t program_id = m_asset_manager->GetProgram("mesh");
-    for (MeshData mesh_data : meshs_data) {
-        const RawVertexBuffer& vertex_buffer = mesh_data.vertex_buffer;
-        const RawIndexBuffer& index_buffer = mesh_data.index_buffer;
-
-        uint32_t position_id = OpenGLAPI::CreateVertexBuffer(vertex_buffer.vertex_count * sizeof(float) * 3,
-                                                             vertex_buffer.positions.data());
-        uint32_t normal_id =
-            OpenGLAPI::CreateVertexBuffer(vertex_buffer.vertex_count * sizeof(float) * 3, vertex_buffer.normals.data());
-        uint32_t index_id = OpenGLAPI::CreateIndexBuffer(index_buffer.primitive_count * sizeof(unsigned int),
-                                                         index_buffer.indices.data());
-
-        uint32_t position_vertex_array_id =
-            OpenGLAPI::CreateVertexArray(position_id, index_id, KOpenGLMeshVertexLayout);
-        uint32_t normal_vertex_array_id = OpenGLAPI::CreateVertexArray(normal_id, index_id, KOpenGLMeshVertexLayout);
-
-        RHIIndexDrawBuffer position_draw_buffer;
-        position_draw_buffer.draw_mode = GL_TRIANGLES;
-        position_draw_buffer.index_count = index_buffer.primitive_count;
-        position_draw_buffer.index_type = GL_UNSIGNED_INT;
-        position_draw_buffer.index_offset = 0;
-        position_draw_buffer.vertex_array_id = position_vertex_array_id;
-        position_draw_buffer.program_id = program_id;
-
-        RHIIndexDrawBuffer normal_draw_buffer;
-        normal_draw_buffer.draw_mode = GL_TRIANGLES;
-        normal_draw_buffer.index_count = index_buffer.primitive_count;
-        normal_draw_buffer.index_type = GL_UNSIGNED_INT;
-        normal_draw_buffer.index_offset = 0;
-        normal_draw_buffer.vertex_array_id = normal_vertex_array_id;
-        normal_draw_buffer.program_id = program_id;
-
-        draw_buffers.emplace_back(position_draw_buffer);
-        draw_buffers.emplace_back(normal_draw_buffer);
-    }
-    return draw_buffers;
-}
-
-void OpenGLRHI::RenderSceneCamera(Scene& scene) {
-    const glm::mat4& view = scene.GetViewMatrix();
-    const glm::mat4& projection = scene.GetProjectionMatrix();
-    const glm::mat4& model = scene.GetModelMatrix();
-
-    // 上传 MVP矩阵到GPU
-    uint32_t program_id = m_asset_manager->GetProgram("mesh");
-    glUseProgram(program_id);
-    glUniformMatrix4fv(glGetUniformLocation(program_id, "u_View"), 1, GL_FALSE, glm::value_ptr(view));
-    glUniformMatrix4fv(glGetUniformLocation(program_id, "u_Projection"), 1, GL_FALSE, glm::value_ptr(projection));
-    glUniformMatrix4fv(glGetUniformLocation(program_id, "u_Model"), 1, GL_FALSE, glm::value_ptr(model));
-}
-
 void OpenGLRHI::GetTextureOfRenderResult(uint64_t& texture_id) { texture_id = m_texture; }
 
 void OpenGLRHI::Tick() {
     auto scene = m_game_world_manager->GetCurrentActivateScene();
-    auto view = scene->GetAllObjectWith<IdComponent, TagComponent, MeshComponent>();
-    for (auto entity : view) {
-        auto& mesh_component = view.get<MeshComponent>(entity);
-        if (mesh_component.Refresh()) {
-            auto id = view.get<IdComponent>(entity);
-            auto tag = view.get<TagComponent>(entity);
-            std::cout << "Entity: " << id.GetId() << " " << tag.GetTag() << std::endl;
-            const std::vector<MeshData>& meshs_data = mesh_component.MeshData();
-            m_draw_buffers = RenderMesh(meshs_data);
-            mesh_component.Refresh(false);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
+    glClearColor(0.0f, 0.0f, 1.0f, 0.5f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    {
+        auto view = scene->GetAllObjectWith<IndexDrawBufferComponent>();
+        for (auto entity : view) {
+            const auto& draw_buffer_component = view.get<IndexDrawBufferComponent>(entity);
+            auto program_id = m_asset_manager->GetProgram("mesh");
+            glUseProgram(program_id);
+            const auto& draw_buffers = draw_buffer_component.GetDrawBuffers();
+            for (const auto& draw_buffer : draw_buffers) {
+                glBindVertexArray(draw_buffer.vertex_array_id);
+                glDrawElements(draw_buffer.draw_mode, draw_buffer.index_count, draw_buffer.index_type,
+                               (void*)draw_buffer.index_offset);
+            }
         }
     }
 
-    RenderSceneCamera(*scene);
-
-    glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
-    glClear(GL_COLOR_BUFFER_BIT);
-
-    // TODO: Add default draw buffer when no draw buffer is created
-    assert(m_draw_buffers.size() > 0);
-
-    for (int i = 0; i < m_draw_buffers.size(); i++) {
-        RHIIndexDrawBuffer draw_buffer = m_draw_buffers[i];
-        glBindVertexArray(draw_buffer.vertex_array_id);
-        glUseProgram(draw_buffer.program_id);
-        glDrawElements(draw_buffer.draw_mode, draw_buffer.index_count, draw_buffer.index_type,
-                       (void*)draw_buffer.index_offset);
+    {
+        auto view = scene->GetAllObjectWith<UniformBufferComponent>();
+        for (auto entity : view) {
+            const auto& uniform_component = view.get<UniformBufferComponent>(entity);
+            auto program_id = m_asset_manager->GetProgram("mesh");
+            MVP mvp = uniform_component.GetMVP();
+            OpenGLAPI::UploadMat4(program_id, "u_model", mvp.model);
+            OpenGLAPI::UploadMat4(program_id, "u_view", mvp.view);
+            OpenGLAPI::UploadMat4(program_id, "u_projection", mvp.projection);
+        }
     }
+
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 

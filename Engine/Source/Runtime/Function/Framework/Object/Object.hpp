@@ -11,10 +11,10 @@ class Scene;
 class Object {
 public:
     Object() = default;
-    Object(entt::entity entity, std::shared_ptr<entt::registry> entt_register)
-        : m_entity(entity), m_registry(entt_register) {}
-    Object(entt::entity entity, std::shared_ptr<Scene> scene);
+    Object(entt::entity entity, std::shared_ptr<entt::registry> entt_register);
     virtual ~Object() = default;
+
+    virtual void Tick(float ts) {}
 
     explicit operator bool() const { return m_entity != entt::null; }
     explicit operator entt::entity() const { return m_entity; }
@@ -27,6 +27,16 @@ public:
     template <typename T, typename... Args>
     T& AddComponent(Args&&... args) {
         assert(!HasComponent<T>());
+        T& component = m_registry->emplace<T>(m_entity, std::forward<Args>(args)...);
+        this->OnComponentAdded<T>(*this, component);
+        return component;
+    }
+
+    template <typename T, typename... Args>
+    T& AddComponentNotReplace(Args&&... args) {
+        if (HasComponent<T>()) {
+            return GetComponent<T>();
+        }
         T& component = m_registry->emplace<T>(m_entity, std::forward<Args>(args)...);
         this->OnComponentAdded<T>(*this, component);
         return component;
@@ -57,6 +67,7 @@ public:
     }
 
 private:
+    // the specific version is implemented in Object.cpp
     template <typename T>
     void OnComponentAdded(Object object, T& component) {}
 

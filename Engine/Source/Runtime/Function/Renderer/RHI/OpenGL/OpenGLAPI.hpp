@@ -4,6 +4,7 @@
 #include <GLFW/glfw3.h>
 #include <cstdint>
 #include <vector>
+#include <glm/glm.hpp>
 
 #include "Runtime/Function/Renderer/RHI/RHIStruct.hpp"
 
@@ -22,6 +23,8 @@ public:
     static uint32_t CreateFragmentShader(const char* shader_source);
     static uint32_t CreateProgram(uint32_t vertex_shader_id, uint32_t fragment_shader_id);
     // static uint32_t CreateTexture();
+
+    static void UploadMat4(uint32_t program_id, const char* uniform_name, glm::mat4 mat4);
 
 private:
     static GLenum GetOpenGLDataTypeFromRHIDataType(RHIDataType type);

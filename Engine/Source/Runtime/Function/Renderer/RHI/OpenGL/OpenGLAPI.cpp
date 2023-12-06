@@ -1,6 +1,7 @@
 #include "Runtime/Function/Renderer/RHI/OpenGL/OpenGLAPI.hpp"
 #include <cstdint>
 #include <iostream>
+#include <glm/gtc/type_ptr.hpp>
 
 #include "Runtime/Function/Renderer/RHI/RHIPredefined.hpp"
 #include "Runtime/Function/Renderer/RHI/RHIStruct.hpp"
@@ -34,14 +35,12 @@ uint32_t OpenGLAPI::CreateUniformBuffer(uint32_t buffer_size, const void* buffer
     GLuint uniform_buffer_id;
     glGenBuffers(1, &uniform_buffer_id);
     glBindBuffer(GL_UNIFORM_BUFFER, uniform_buffer_id);
-    glBufferData(GL_UNIFORM_BUFFER, buffer_size, buffer_data, GL_STATIC_DRAW);
+    glBufferData(GL_UNIFORM_BUFFER, buffer_size, buffer_data, GL_DYNAMIC_DRAW);
     glBindBuffer(GL_UNIFORM_BUFFER, 0); // Must unbind the buffer after use
     return uniform_buffer_id;
 }
 
-void OpenGLAPI::UnloadUniformBuffer(uint32_t buffer_id) {
-    glDeleteBuffers(1, &buffer_id);
-}
+void OpenGLAPI::UnloadUniformBuffer(uint32_t buffer_id) { glDeleteBuffers(1, &buffer_id); }
 
 RHIVertexLayout OpenGLAPI::CreateVertexLayout(std::vector<RHIElementType> info) {
     RHIVertexLayout vertex_layout;
@@ -65,17 +64,21 @@ uint32_t OpenGLAPI::CreateVertexArray(uint32_t vertex_buffer_id, uint32_t index_
     GLuint vertex_array_id;
     glGenVertexArrays(1, &vertex_array_id);
     glBindVertexArray(vertex_array_id);
+
     glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer_id);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_buffer_id);
+
     for (auto attribute : layout.attributes) {
         glEnableVertexAttribArray(attribute.location);
         GLenum data_type = GetOpenGLDataTypeFromRHIDataType(attribute.data_type);
         glVertexAttribPointer(attribute.location, attribute.count, data_type, attribute.normalized, layout.stride,
                               (void*)attribute.offset);
     }
+
     glBindVertexArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
     return vertex_array_id;
 }
 
@@ -120,6 +123,11 @@ uint32_t OpenGLAPI::CreateProgram(uint32_t vertex_shader_id, uint32_t fragment_s
         std::cout << "ERROR::PROGRAM::LINK_FAILED\n" << infoLog << std::endl;
     }
     return program_id;
+}
+
+void OpenGLAPI::UploadMat4(uint32_t program_id, const char* uniform_name, glm::mat4 mat4) {
+    GLint location = glGetUniformLocation(program_id, uniform_name);
+    glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(mat4));
 }
 
 /* -------------------------------------------------------------------------- */

@@ -3,13 +3,12 @@
 
 namespace RendererDemo {
 
-void TransformComponent::UpdateModelMatrix() {
-    m_model_matrix = glm::mat4(1.0f);
-    m_model_matrix = glm::translate(m_model_matrix, m_position);
-    m_model_matrix = glm::rotate(m_model_matrix, glm::radians(m_rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
-    m_model_matrix = glm::rotate(m_model_matrix, glm::radians(m_rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
-    m_model_matrix = glm::rotate(m_model_matrix, glm::radians(m_rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
-    m_model_matrix = glm::scale(m_model_matrix, m_scale);
+void TransformComponent::Tick(float ts) {
+    m_model_matrix = glm::translate(glm::mat4(1.0f), m_position) *
+                     glm::rotate(glm::mat4(1.0f), glm::radians(m_rotation.x), glm::vec3(1, 0, 0)) *
+                     glm::rotate(glm::mat4(1.0f), glm::radians(m_rotation.y), glm::vec3(0, 1, 0)) *
+                     glm::rotate(glm::mat4(1.0f), glm::radians(m_rotation.z), glm::vec3(0, 0, 1)) *
+                     glm::scale(glm::mat4(1.0f), m_scale);
 }
 
 } // namespace RendererDemo

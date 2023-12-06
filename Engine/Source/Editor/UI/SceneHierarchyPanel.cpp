@@ -2,6 +2,7 @@
 #include <imgui.h>
 #include <cstdint>
 #include <entt/entity/fwd.hpp>
+#include "Runtime/Function/Framework/Object/SceneCamera.hpp"
 #include "Runtime/Function/Framework/Scene/Scene.hpp"
 #include "Runtime/Function/Framework/Object/Object.hpp"
 #include "Runtime/Function/Framework/Component/Component.hpp"
@@ -16,7 +17,7 @@ void SceneHierarchyPanel::OnImGuiRender() {
     ImGui::Begin("Scene Hierarchy");
     if (m_scene) {
         for (auto entity : m_scene->m_registry->view<TagComponent>()) {
-            Object object(entity, m_scene);
+            Object object = m_scene->GetObject(entity);
 
             std::string tag = object.GetComponent<TagComponent>().GetTag();
             ImGui::PushID(static_cast<uint32_t>(object));
@@ -36,12 +37,35 @@ void SceneHierarchyPanel::OnImGuiRender() {
 }
 
 void SceneHierarchyPanel::DrawComponentsofObject(Object object) {
-    // if (object.HasComponent<TagComponent>()) {
-    //     auto& tag = object.GetComponent<TagComponent>().GetTag();
-    //     char buffer[256];
-    //     memset(buffer, 0, sizeof(buffer));
-    //     strcpy_s(buffer, sizeof(buffer), tag.c_str());
-    // }
+    auto& scene_camera = m_scene->GetSceneCamera();
+    auto type = scene_camera.GetProjectionType();
+    if (type == ProjectionType::Perspective) {
+        auto fov = scene_camera.GetPerspectiveFOV();
+        if (ImGui::DragFloat("Perspective FOV", &fov)) {
+            scene_camera.SetPerspectiveFOV(fov);
+        }
+        auto near = scene_camera.GetPerspectiveNear();
+        if (ImGui::DragFloat("Perspective Near", &near)) {
+            scene_camera.SetPerspectiveNear(near);
+        }
+        auto far = scene_camera.GetPerspectiveFar();
+        if (ImGui::DragFloat("Perspective Far", &far)) {
+            scene_camera.SetPerspectiveFar(far);
+        }
+    } else if (type == ProjectionType::Orthographic) {
+        auto size = scene_camera.GetOrthographicSize();
+        if (ImGui::DragFloat("Orthographic Size", &size)) {
+            scene_camera.SetOrthographicSize(size);
+        }
+        auto near = scene_camera.GetOrthographicNear();
+        if (ImGui::DragFloat("Orthographic Near", &near)) {
+            scene_camera.SetOrthographicNear(near);
+        }
+        auto far = scene_camera.GetOrthographicFar();
+        if (ImGui::DragFloat("Orthographic Far", &far)) {
+            scene_camera.SetOrthographicFar(far);
+        }
+    }
 }
 
 } // namespace RendererDemo

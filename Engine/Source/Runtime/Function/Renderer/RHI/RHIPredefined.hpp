@@ -24,7 +24,7 @@ constexpr RHIElementInfo KColorAttribute = {
 const std::unordered_map<RHIElementType, RHIElementInfo> KPredefinedVertexAttributeMap = {
     {RHIElementType::Position, KPositionAttribute}, {RHIElementType::Color, KColorAttribute}};
 
-const RHIVertexLayout KOpenGLMeshVertexLayout = {
+const RHIVertexLayout KSiampleVertexLayout = {
     .attributes =
         {
             {
@@ -45,6 +45,53 @@ const RHIVertexLayout KOpenGLMeshVertexLayout = {
             },
         },
     .stride = 6 * sizeof(float),
+};
+
+const RHIVertexLayout KOpenGLMeshVertexLayout = {
+    .attributes =
+        {
+            {
+                // position
+                .location = 0,
+                .offset = 0,
+                .count = 3,
+                .data_type = RHIDataType::Float,
+                .normalized = false,
+            },
+            {
+                // normal
+                .location = 1,
+                .offset = 3 * sizeof(float),
+                .count = 3,
+                .data_type = RHIDataType::Float,
+                .normalized = false,
+            },
+            {
+                // tangents
+                .location = 2,
+                .offset = 6 * sizeof(float),
+                .count = 3,
+                .data_type = RHIDataType::Float,
+                .normalized = false,
+            },
+            {
+                // bitangents
+                .location = 3,
+                .offset = 9 * sizeof(float),
+                .count = 3,
+                .data_type = RHIDataType::Float,
+                .normalized = false,
+            },
+            {
+                // uvs
+                .location = 4,
+                .offset = 12 * sizeof(float),
+                .count = 2,
+                .data_type = RHIDataType::Float,
+                .normalized = false,
+            },
+        },
+    .stride = 14 * sizeof(float),
 };
 
 struct MVP {
